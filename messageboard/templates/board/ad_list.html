@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Боковая панель с категориями -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-tags"></i> Категории</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for category in popular_categories %}
+                        <a href="{% url 'board:category_ads' category.slug %}" 
+                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            {{ category.name }}
+                            <span class="badge bg-primary rounded-pill">{{ category.ad_count }}</span>
+                        </a>
+                    {% empty %}
+                        <div class="list-group-item text-muted">Нет категорий</div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Кнопка создания объявления -->
+            <div class="d-grid gap-2 mt-3">
+                <a href="{% url 'board:ad_create' %}" class="btn btn-success btn-lg">
+                    <i class="bi bi-plus-circle"></i> Создать объявление
+                </a>
+            </div>
+        </div>
+        
+        <!-- Основной контент с объявлениями -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-megaphone"></i> Свежие объявления</h2>
+                <span class="badge bg-secondary">{{ page_obj.paginator.count }} объявлений</span>
+            </div>
+            
+            {% if ads %}
+                <div class="row">
+                    {% for ad in ads %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm hover-shadow">
+                                {% if ad.main_image %}
+                                    <img src="{{ ad.main_image.url }}" class="card-img-top" alt="{{ ad.title }}" 
+                                         style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
+                                         style="height: 200px;">
+                                        <i class="bi bi-image display-1"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ ad.title|truncatechars:50 }}</h5>
+                                    <p class="card-text text-muted small">
+                                        <i class="bi bi-geo-alt"></i> {{ ad.city }}<br>
+                                        <i class="bi bi-clock"></i> {{ ad.created_at|date:"d.m.Y" }}
+                                    </p>
+                                    <p class="card-text">{{ ad.description|truncatewords:15 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h5 text-primary mb-0">{{ ad.price|floatformat:0 }} ₽</span>
+                                        <span class="badge bg-info">{{ ad.get_ad_type_display }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <a href="{% url 'board:ad_detail' ad.pk %}" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-eye"></i> Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Пагинация -->
+                {% if is_paginated %}
+                    <nav aria-label="Навигация по страницам">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">&laquo; Первая</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle display-4"></i>
+                    <h4>Нет объявлений</h4>
+                    <p>Будьте первым, кто разместит объявление!</p>
+                    <a href="{% url 'board:ad_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Создать объявление
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}

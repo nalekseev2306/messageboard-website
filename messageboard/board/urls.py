@@ -1,25 +1,25 @@
 from django.urls import path
 from . import views
 
-app_name = 'board'  # пространство имен для обратных ссылок
+app_name = 'board'
 
 urlpatterns = [
-    # Главная и общая страницы
-    path('', views.ad_list, name='ad_list'),
+    # Главная и общие страницы
+    path('', views.AdListView.as_view(), name='ad_list'),
     path('about/', views.AboutView.as_view(), name='about'),
     
     # CRUD для объявлений
-    path('ad/<int:pk>/', views.ad_detail, name='ad_detail'),
-    path('ad/create/', views.ad_create, name='ad_create'),
-    path('ad/<int:pk>/edit/', views.ad_update, name='ad_update'),
-    path('ad/<int:pk>/delete/', views.ad_delete, name='ad_delete'),
+    path('ad/<int:pk>/', views.AdDetailView.as_view(), name='ad_detail'),
+    path('ad/create/', views.AdCreateView.as_view(), name='ad_create'),
+    path('ad/<int:pk>/edit/', views.AdUpdateView.as_view(), name='ad_update'),
+    path('ad/<int:pk>/delete/', views.AdDeleteView.as_view(), name='ad_delete'),
     
     # Категории
-    path('category/<slug:slug>/', views.category_ads, name='category_ads'),
+    path('category/<slug:slug>/', views.CategoryAdsListView.as_view(), name='category_ads'),
     
     # Поиск
-    path('search/', views.search_ads, name='search'),
+    path('search/', views.SearchAdsListView.as_view(), name='search'),
     
     # Мои объявления
-    path('my-ads/', views.my_ads, name='my_ads'),
+    # path('my-ads/', views.MyAdsListView.as_view(), name='my_ads'),
 ]

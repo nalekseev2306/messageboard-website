@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Форма поиска -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-search"></i> Фильтры</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'board:search' %}">
+                        <div class="mb-3">
+                            <label class="form-label">Поиск</label>
+                            <input type="text" name="q" class="form-control" value="{{ query }}" placeholder="Введите слово...">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Категория</label>
+                            <select name="category" class="form-select">
+                                <option value="">Все категории</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ cat.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" name="city" class="form-control" value="{{ selected_city }}" placeholder="Город">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Тип объявления</label>
+                            <select name="ad_type" class="form-select">
+                                <option value="">Все типы</option>
+                                {% for type_code, type_name in ad_types %}
+                                    <option value="{{ type_code }}" {% if selected_ad_type == type_code %}selected{% endif %}>
+                                        {{ type_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Искать
+                        </button>
+                        
+                        <a href="{% url 'board:search' %}" class="btn btn-secondary w-100 mt-2">
+                            <i class="bi bi-arrow-repeat"></i> Сбросить
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Результаты -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-search"></i> Результаты поиска</h2>
+                <span class="badge bg-secondary">{{ page_obj.paginator.count }} найдено</span>
+            </div>
+            
+            {% if query %}
+                <div class="alert alert-info">
+                    По запросу: <strong>"{{ query }}"</strong>
+                </div>
+            {% endif %}
+            
+            {% if ads %}
+                <div class="row">
+                    {% for ad in ads %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                {% if ad.main_image %}
+                                    <img src="{{ ad.main_image.url }}" class="card-img-top" alt="{{ ad.title }}" 
+                                         style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
+                                         style="height: 200px;">
+                                        <i class="bi bi-image display-1"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ ad.title|truncatechars:50 }}</h5>
+                                    <p class="card-text text-muted small">
+                                        <i class="bi bi-geo-alt"></i> {{ ad.city }}
+                                    </p>
+                                    <p class="card-text">{{ ad.description|truncatewords:15 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h5 text-primary mb-0">{{ ad.price|floatformat:0 }} ₽</span>
+                                        <span class="badge bg-info">{{ ad.get_ad_type_display }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <a href="{% url 'board:ad_detail' ad.pk %}" class="btn btn-outline-primary w-100">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Пагинация -->
+                {% if is_paginated %}
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
+                                        &laquo;
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
+                                        Предыдущая
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
+                                        Следующая
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-emoji-frown display-4"></i>
+                    <h4>Ничего не найдено</h4>
+                    <p>Попробуйте изменить параметры поиска</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
