@@ -78,6 +78,12 @@ class User(AbstractUser):
             return f'{self.first_name} {self.last_name}'
         return self.username
     
+    def save(self, *args, **kwargs):
+        if self.phone:
+            import re
+            self.phone = re.sub(r'[\s\-\(\)]', '', self.phone)
+        super().save(*args, **kwargs)
+    
     # def update_ad_counts(self):
     #     """Обновляет счетчики объявлений"""
     #     from board.models import Ad

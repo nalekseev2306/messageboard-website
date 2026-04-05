@@ -15,6 +15,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     phone = forms.CharField(
         label='Телефон',
+        required=True,
         validators=[phone_regex],
         widget=forms.TextInput(attrs={
             'class': 'form-control',
@@ -33,6 +34,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     email = forms.EmailField(
         label='Email',
+        required=True,
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
             'placeholder': 'email@example.com'
