@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     
     # Наши приложение
     'board',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -98,6 +99,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Переопределённый пользователь
+AUTH_USER_MODEL = 'users.User'
+
 # Internationalization
 LANGUAGE_CODE = 'ru-ru'
 
@@ -119,9 +123,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Настройки авторизации
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'board:ad_list'
+
 # Настройки для crispy-forms (Bootstrap 5)
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Для отправки email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'

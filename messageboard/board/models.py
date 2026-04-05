@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 from django.core.validators import MinLengthValidator
@@ -71,12 +71,12 @@ class Ad(models.Model):
     # Контактная информация
     contact_phone = models.CharField('Телефон для связи', max_length=20)
     contact_email = models.EmailField('Email для связи', blank=True, null=True)
-    contact_name = models.CharField('Имя контактного лица', max_length=100, default='Продавец')
+    contact_name = models.CharField('Имя контактного лица', max_length=50, default='Продавец')
     
-    # Локация
+    # Город
     city = models.CharField('Город', max_length=100, blank=True, null=True)
     
-    # Изображения (основное и дополнительные)
+    # Изображения
     main_image = models.ImageField('Главное изображение', upload_to='ads/main/%Y/%m/', blank=True, null=True)
     
     # Статусы объявления
@@ -84,7 +84,7 @@ class Ad(models.Model):
     
     # Автор
     author = models.ForeignKey(
-        User, 
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True, 
         blank=True,

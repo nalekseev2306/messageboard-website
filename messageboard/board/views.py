@@ -87,6 +87,9 @@ class AdCreateView(LoginRequiredMixin, CreateView):
         """Привязываем автора"""
         ad = form.save(commit=False)
         ad.author = self.request.user
+        ad.contact_phone = self.request.user.phone
+        ad.contact_email = self.request.user.email
+        ad.contact_name = self.request.user.get_full_name()
         
         ad.save()
         messages.success(self.request, 'Ваше объявление успешно опубликовано!')
@@ -226,25 +229,3 @@ class AboutView(TemplateView):
         context['total_categories'] = Category.objects.filter(is_active=True).count()
         context['title'] = 'О проекте'
         return context
-
-
-# class MyAdsListView(LoginRequiredMixin, ListView):
-#     """Список объявлений текущего пользователя"""
-#     model = Ad
-#     template_name = 'board/my_ads.html'
-#     context_object_name = 'ads'
-#     paginate_by = 10
-    
-#     def get_queryset(self):
-#         return Ad.objects.filter(
-#             author=self.request.user
-#         ).select_related('category').order_by('-created_at')
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['active_ads'] = self.get_queryset().filter(is_active=True).count()
-#         context['expired_ads'] = self.get_queryset().filter(
-#             published_until__lt=timezone.now()
-#         ).count()
-#         context['title'] = 'Мои объявления'
-#         return context

@@ -8,8 +8,7 @@ class AdForm(forms.ModelForm):
         model = Ad
         fields = [
             'title', 'description', 'category', 'ad_type',
-            'price', 'contact_name', 'contact_phone', 'contact_email',
-            'city', 'published_until', 'main_image'
+            'price', 'city', 'published_until', 'main_image'
         ]
         widgets = {
             'title': forms.TextInput(attrs={
@@ -25,22 +24,6 @@ class AdForm(forms.ModelForm):
             'ad_type': forms.Select(attrs={'class': 'form-select'}),
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': '0'
-            }),
-            # позже будем брать из профиля
-            'contact_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Иван Иванов'
-            }),
-            # позже будем брать из профиля
-            'contact_phone': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '+7 XXX XXX-XX-XX'
-            }),
-            # позже будем брать из профиля
-            'contact_email': forms.EmailInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'email@example.com'
             }),
             'city': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -60,13 +43,11 @@ class AdForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Делаем некоторые поля необязательными
-        self.fields['contact_email'].required = False
         self.fields['main_image'].required = False
         self.fields['published_until'].required = False
         self.fields['published_until'].help_text = 'Оставьте пустым для автоматической установки (30 дней)'
-        self.fiels['price'].required = False
+        self.fields['price'].required = False
         self.fields['price'].help_text = 'Оставьте пустым, если не требуется'
-
 
 
 class SearchForm(forms.Form):

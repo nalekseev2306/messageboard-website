@@ -50,18 +50,28 @@
                                 <li><a class="dropdown-item" href="{% url 'board:ad_create' %}">
                                     <i class="bi bi-plus-circle"></i> Создать объявление
                                 </a></li>
+                                {% comment %} <li><a class="dropdown-item" href="{% url 'users:profile' %}">
+                                    <i class="bi bi-person"></i> Мой профиль
+                                </a></li> {% endcomment %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">
-                                    <i class="bi bi-gear"></i> Админка
-                                </a></li>
-                                <li><a class="dropdown-item" href="{% url 'admin:logout' %}">
-                                    <i class="bi bi-box-arrow-right"></i> Выйти
-                                </a></li>
+                                {% if user.is_superuser %}
+                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}">
+                                        <i class="bi bi-gear"></i> Админка
+                                    </a></li>
+                                {% endif %}
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right"></i> Выйти
+                                        </button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin:login' %}">
+                            <a class="nav-link" href="{% url 'login' %}">
                                 <i class="bi bi-box-arrow-in-right"></i> Вход
                             </a>
                         </li>
@@ -97,11 +107,7 @@
                         <i class="bi bi-c-circle"></i> 2026 Доска объявлений
                     </p>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        <i class="bi bi-heart-fill text-danger"></i> Сделано на Django
-                    </p>
-                </div>
+                <!-- Добавить сюда контактную информацию или что-то ещё -->
             </div>
         </div>
     </footer>

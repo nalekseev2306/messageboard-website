@@ -19,7 +19,4 @@ urlpatterns = [
     
     # Поиск
     path('search/', views.SearchAdsListView.as_view(), name='search'),
-    
-    # Мои объявления
-    # path('my-ads/', views.MyAdsListView.as_view(), name='my_ads'),
 ]

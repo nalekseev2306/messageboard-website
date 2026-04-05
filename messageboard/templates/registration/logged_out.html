@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Выход - Доска объявлений{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-check-circle"></i> Выход выполнен</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h3 class="mt-3">Вы успешно вышли из системы</h3>
+                    <p class="text-muted">Спасибо, что использовали наш сервис!</p>
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'login' %}" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти снова
+                        </a>
+                        <a href="{% url 'board:ad_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-house"></i> На главную
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
