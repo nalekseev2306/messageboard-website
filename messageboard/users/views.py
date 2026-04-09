@@ -1,8 +1,15 @@
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import CustomUserCreationForm
-from .models import User
+from django.db.models import Count
+from django.utils import timezone
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+
+User = get_user_model()
+
 
 class RegisterView(CreateView):
     """Регистрация нового пользователя"""
@@ -19,3 +26,105 @@ class RegisterView(CreateView):
     def form_invalid(self, form):
         messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме.')
         return super().form_invalid(form)
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    """Личный профиль пользователя"""
+    model = User
+    template_name = 'users/profile.html'
+    context_object_name = 'profile_user'
+    
+    def get_object(self):
+        """Возвращает текущего пользователя"""
+        return self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from board.models import Ad
+        
+        # Получаем объявления пользователя
+        user_ads = Ad.objects.filter(
+            author=self.request.user
+        ).select_related('category').order_by('-created_at')
+        
+        # Активные объявления
+        active_ads = user_ads.filter(
+            is_active=True,
+            published_until__gt=timezone.now()
+        )
+        
+        # Просроченные объявления
+        expired_ads = user_ads.filter(
+            published_until__lt=timezone.now()
+        )
+        
+        context['user_ads'] = user_ads[:10]
+        context['total_ads'] = user_ads.count()
+        context['active_ads'] = active_ads.count()
+        context['expired_ads'] = expired_ads.count()
+        
+        return context
+
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    """Редактирование профиля"""
+    model = User
+    form_class = CustomUserChangeForm
+    template_name = 'users/profile_edit.html'
+    
+    def get_object(self):
+        """Возвращает текущего пользователя"""
+        return self.request.user
+    
+    def get_success_url(self):
+        return reverse_lazy('users:profile')
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Ваш профиль успешно обновлен!')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме.')
+        return super().form_invalid(form)
+
+
+class PublicProfileView(DetailView):
+    """Публичный профиль пользователя"""
+    model = User
+    template_name = 'users/public_profile.html'
+    context_object_name = 'profile_user'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    
+    def get_object(self, queryset=None):
+        """Получаем пользователя по username"""
+        username = self.kwargs.get('username')
+        return get_object_or_404(User, username=username, is_active=True)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from board.models import Ad
+        
+        user = self.get_object()
+        
+        # Получаем только активные объявления пользователя
+        user_ads = Ad.objects.filter(
+            author=user,
+            is_active=True,
+            published_until__gt=timezone.now()
+        ).select_related('category').order_by('-created_at')
+        
+        # Статистика пользователя
+        total_ads = user_ads.count()
+        
+        # Категории объявлений пользователя
+        categories = user_ads.values('category__name', 'category__slug').annotate(
+            count=Count('id')
+        ).order_by('-count')
+        
+        context['user_ads'] = user_ads[:10]
+        context['total_ads'] = total_ads
+        context['categories'] = categories
+        context['is_own_profile'] = self.request.user.is_authenticated and self.request.user == user
+        
+        return context

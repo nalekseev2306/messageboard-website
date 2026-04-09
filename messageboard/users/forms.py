@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -63,20 +64,64 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
-    """Форма редактирования профиля"""
+    """Форма редактирования профиля с проверкой уникальности username"""
+    
+    phone_regex = RegexValidator(
+        regex=r'^\+7\d{10}$',
+        message="Введите номер телефона в формате: +7XXXXXXXXXX"
+    )
+    
+    username = forms.CharField(
+        label='Имя пользователя',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    
+    email = forms.EmailField(
+        label='Email',
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    
+    phone = forms.CharField(
+        label='Телефон',
+        required=False,
+        validators=[phone_regex],
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    
+    city = forms.CharField(
+        label='Город',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    
+    first_name = forms.CharField(
+        label='Имя',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    
+    last_name = forms.CharField(
+        label='Фамилия',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
     
     class Meta:
         model = User
         fields = ('username', 'email', 'phone', 'city', 'first_name', 'last_name')
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'city': forms.TextInput(attrs={'class': 'form-control'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password'].widget = forms.HiddenInput()
+        # self.fields['username'].help_text = None
+    
+    def clean_username(self):
+        """Проверка уникальности username"""
+        username = self.cleaned_data.get('username')
+        if username:
+            # Проверяем, существует ли пользователь с таким username
+            if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+                raise ValidationError('Пользователь с таким именем уже существует.')
+        return username
+    

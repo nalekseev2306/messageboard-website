@@ -133,8 +133,3 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Для отправки email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
-
-# Настройки для админки
-ADMIN_SITE_HEADER = "Доска объявлений - Панель управления"
-ADMIN_SITE_TITLE = "Управление доской объявлений"
-ADMIN_INDEX_TITLE = "Добро пожаловать в систему управления"

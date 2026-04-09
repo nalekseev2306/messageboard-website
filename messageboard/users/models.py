@@ -30,14 +30,6 @@ class User(AbstractUser):
     )
     
     # # Дополнительная информация
-    # avatar = models.ImageField(
-    #     'Аватар',
-    #     upload_to='avatars/%Y/%m/',
-    #     blank=True,
-    #     null=True,
-    #     help_text='Рекомендуемый размер: 200x200 пикселей'
-    # )
-    
     # bio = models.TextField(
     #     'О себе',
     #     max_length=500,

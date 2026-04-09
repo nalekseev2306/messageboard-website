@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой профиль - Доска объявлений{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="mb-0"><i class="bi bi-person-badge"></i> Мой профиль</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width: 100px; height: 100px;">
+                            <i class="bi bi-person display-4"></i>
+                        </div>
+                        <h4>{{ profile_user.get_full_name|default:profile_user.username }}</h4>
+                        <p class="text-muted">@{{ profile_user.username }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <strong><i class="bi bi-telephone"></i> Телефон:</strong>
+                        <p class="mb-0">{{ profile_user.phone|default:"<span class='text-muted'>Не указан</span>" }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong><i class="bi bi-envelope"></i> Email:</strong>
+                        <p class="mb-0">{{ profile_user.email|default:"<span class='text-muted'>Не указан</span>" }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong><i class="bi bi-geo-alt"></i> Город:</strong>
+                        <p class="mb-0">{{ profile_user.city|default:"<span class='text-muted'>Не указан</span>" }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong><i class="bi bi-calendar"></i> На сайте:</strong>
+                        <p class="mb-0">{{ profile_user.date_joined|date:"d.m.Y" }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'users:profile_edit' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Редактировать профиль
+                        </a>
+                        <a href="{% url 'users:password_change' %}" class="btn btn-outline-warning">
+                            <i class="bi bi-key"></i> Сменить пароль
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> О себе</h5>
+                </div>
+                <div class="card-body">
+                    {% if profile_user.bio %}
+                        <p class="mb-0">{{ profile_user.bio|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">Информация о себе не заполнена</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-megaphone"></i> Мои объявления</h5>
+                    <a href="{% url 'board:ad_create' %}" class="btn btn-sm btn-light">
+                        <i class="bi bi-plus-circle"></i> Создать
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="alert alert-primary text-center">
+                                <h3 class="mb-0">{{ total_ads }}</h3>
+                                <span>Всего</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="alert alert-success text-center">
+                                <h3 class="mb-0">{{ active_ads }}</h3>
+                                <span>Активных</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="alert alert-secondary text-center">
+                                <h3 class="mb-0">{{ expired_ads }}</h3>
+                                <span>Просрочено</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if user_ads %}
+                        <div class="list-group">
+                            {% for ad in user_ads %}
+                                <a href="{% url 'board:ad_detail' ad.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ ad.title }}</strong><br>
+                                            <small class="text-muted">
+                                                {{ ad.created_at|date:"d.m.Y" }} • {{ ad.category.name }}
+                                            </small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge {% if ad.is_active %}bg-success{% else %}bg-secondary{% endif %} mb-1">
+                                                {{ ad.price|default:"Договорная" }} ₽
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">
+                                                {% if ad.is_expired %}
+                                                    <span class="text-danger">Истекло</span>
+                                                {% elif ad.is_active %}
+                                                    <span class="text-success">Активно</span>
+                                                {% else %}
+                                                    <span class="text-secondary">Неактивно</span>
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                        {% if total_ads > 10 %}
+                            <div class="text-center mt-3">
+                                <a href="{% url 'board:my_ads' %}" class="btn btn-outline-primary">
+                                    Все объявления ({{ total_ads }})
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted text-center">У вас пока нет объявлений</p>
+                        <div class="text-center">
+                            <a href="{% url 'board:ad_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Создать первое объявление
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
