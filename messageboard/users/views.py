@@ -1,11 +1,13 @@
 from django.views.generic import CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import Count
 from django.utils import timezone
+from django.core.paginator import Paginator
+
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 User = get_user_model()
@@ -16,7 +18,7 @@ class RegisterView(CreateView):
     model = User
     form_class = CustomUserCreationForm
     template_name = 'registration/registration_form.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('users:login')
     
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -29,7 +31,7 @@ class RegisterView(CreateView):
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
-    """Личный профиль пользователя"""
+    """Личный профиль пользователя с пагинацией"""
     model = User
     template_name = 'users/profile.html'
     context_object_name = 'profile_user'
@@ -42,24 +44,31 @@ class ProfileView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         from board.models import Ad
         
-        # Получаем объявления пользователя
-        user_ads = Ad.objects.filter(
+        # Получаем все объявления пользователя
+        all_user_ads = Ad.objects.filter(
             author=self.request.user
         ).select_related('category').order_by('-created_at')
         
         # Активные объявления
-        active_ads = user_ads.filter(
+        active_ads = all_user_ads.filter(
             is_active=True,
             published_until__gt=timezone.now()
         )
         
         # Просроченные объявления
-        expired_ads = user_ads.filter(
+        expired_ads = all_user_ads.filter(
             published_until__lt=timezone.now()
         )
         
-        context['user_ads'] = user_ads[:10]
-        context['total_ads'] = user_ads.count()
+        # Пагинация для объявлений
+        paginator = Paginator(all_user_ads, 10)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['user_ads'] = page_obj
+        context['page_obj'] = page_obj
+        context['is_paginated'] = page_obj.has_other_pages()
+        context['total_ads'] = all_user_ads.count()
         context['active_ads'] = active_ads.count()
         context['expired_ads'] = expired_ads.count()
         
@@ -89,12 +98,19 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 
 
 class PublicProfileView(DetailView):
-    """Публичный профиль пользователя"""
+    """Публичный профиль пользователя с пагинацией"""
     model = User
     template_name = 'users/public_profile.html'
     context_object_name = 'profile_user'
     slug_field = 'username'
     slug_url_kwarg = 'username'
+    
+    def dispatch(self, request, *args, **kwargs):
+        """Если пользователь смотрит свой профиль - редирект на личный"""
+        username = self.kwargs.get('username')
+        if request.user.is_authenticated and request.user.username == username:
+            return redirect('users:profile')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_object(self, queryset=None):
         """Получаем пользователя по username"""
@@ -108,21 +124,28 @@ class PublicProfileView(DetailView):
         user = self.get_object()
         
         # Получаем только активные объявления пользователя
-        user_ads = Ad.objects.filter(
+        all_user_ads = Ad.objects.filter(
             author=user,
             is_active=True,
             published_until__gt=timezone.now()
         ).select_related('category').order_by('-created_at')
         
         # Статистика пользователя
-        total_ads = user_ads.count()
+        total_ads = all_user_ads.count()
         
         # Категории объявлений пользователя
-        categories = user_ads.values('category__name', 'category__slug').annotate(
+        categories = all_user_ads.values('category__name', 'category__slug').annotate(
             count=Count('id')
         ).order_by('-count')
         
-        context['user_ads'] = user_ads[:10]
+        # Пагинация для объявлений
+        paginator = Paginator(all_user_ads, 6)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['user_ads'] = page_obj
+        context['page_obj'] = page_obj
+        context['is_paginated'] = page_obj.has_other_pages()
         context['total_ads'] = total_ads
         context['categories'] = categories
         context['is_own_profile'] = self.request.user.is_authenticated and self.request.user == user

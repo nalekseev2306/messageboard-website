@@ -19,7 +19,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <span class="h2 text-primary">{{ ad.price|floatformat:0 }} ₽</span>
+                        <span class="h2 text-primary">Цена - {{ ad.price|default:"не указана" }} ₽</span>
                     </div>
                     
                     <div class="mb-4">
@@ -58,7 +58,7 @@
                                     <div class="card h-100">
                                         <div class="card-body">
                                             <h6 class="card-title">{{ similar.title|truncatechars:40 }}</h6>
-                                            <p class="card-text text-primary">{{ similar.price|floatformat:0 }} ₽</p>
+                                            <p class="card-text text-primary">Цена - {{ similar.price|default:"не указана" }} ₽</p>
                                             <a href="{% url 'board:ad_detail' similar.pk %}" class="btn btn-sm btn-outline-primary">
                                                 Посмотреть
                                             </a>

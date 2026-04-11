@@ -12,7 +12,7 @@
                     <h5 class="mb-0"><i class="bi bi-search"></i> Фильтры</h5>
                 </div>
                 <div class="card-body">
-                    <form method="get" action="{% url 'board:search' %}">
+                    <form method="get" action="{% url 'board:search' %}" id="searchForm">
                         <div class="mb-3">
                             <label class="form-label">Поиск</label>
                             <input type="text" name="q" class="form-control" value="{{ query }}" placeholder="Введите слово...">
@@ -76,76 +76,14 @@
                 <div class="row">
                     {% for ad in ads %}
                         <div class="col-md-6 mb-4">
-                            <div class="card h-100 shadow-sm">
-                                {% if ad.main_image %}
-                                    <img src="{{ ad.main_image.url }}" class="card-img-top" alt="{{ ad.title }}" 
-                                         style="height: 200px; object-fit: cover;">
-                                {% else %}
-                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
-                                         style="height: 200px;">
-                                        <i class="bi bi-image display-1"></i>
-                                    </div>
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ ad.title|truncatechars:50 }}</h5>
-                                    <p class="card-text text-muted small">
-                                        <i class="bi bi-geo-alt"></i> {{ ad.city }}
-                                    </p>
-                                    <p class="card-text">{{ ad.description|truncatewords:15 }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="h5 text-primary mb-0">{{ ad.price|floatformat:0 }} ₽</span>
-                                        <span class="badge bg-info">{{ ad.get_ad_type_display }}</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-white">
-                                    <a href="{% url 'board:ad_detail' ad.pk %}" class="btn btn-outline-primary w-100">
-                                        Подробнее
-                                    </a>
-                                </div>
-                            </div>
+                            {% include 'includes/ad_card.html' with ad=ad %}
                         </div>
                     {% endfor %}
                 </div>
                 
-                <!-- Пагинация -->
-                {% if is_paginated %}
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            {% if page_obj.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
-                                        &laquo;
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
-                                        Предыдущая
-                                    </a>
-                                </li>
-                            {% endif %}
-                            
-                            {% for num in page_obj.paginator.page_range %}
-                                {% if page_obj.number == num %}
-                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ num }}&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
-                                            {{ num }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if page_obj.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&category={{ selected_category }}&city={{ selected_city }}&ad_type={{ selected_ad_type }}">
-                                        Следующая
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
+                {% with preserved_params="q="|add:query|add:"&category="|add:selected_category|add:"&city="|add:selected_city|add:"&ad_type="|add:selected_ad_type %}
+                    {% include 'includes/pagination.html' with preserved_params=preserved_params %}
+                {% endwith %}
             {% else %}
                 <div class="alert alert-warning text-center">
                     <i class="bi bi-emoji-frown display-4"></i>

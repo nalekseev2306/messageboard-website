@@ -112,7 +112,7 @@
                                         </div>
                                         <div class="text-end">
                                             <span class="badge {% if ad.is_active %}bg-success{% else %}bg-secondary{% endif %} mb-1">
-                                                {{ ad.price|default:"Договорная" }} ₽
+                                                {{ ad.price|default:"Не указана" }} ₽
                                             </span>
                                             <br>
                                             <small class="text-muted">
@@ -129,13 +129,8 @@
                                 </a>
                             {% endfor %}
                         </div>
-                        {% if total_ads > 10 %}
-                            <div class="text-center mt-3">
-                                <a href="{% url 'board:my_ads' %}" class="btn btn-outline-primary">
-                                    Все объявления ({{ total_ads }})
-                                </a>
-                            </div>
-                        {% endif %}
+                        
+                        {% include 'includes/pagination.html' %}
                     {% else %}
                         <p class="text-muted text-center">У вас пока нет объявлений</p>
                         <div class="text-center">

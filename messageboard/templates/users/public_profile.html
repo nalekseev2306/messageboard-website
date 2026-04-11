@@ -39,14 +39,6 @@
                     <div class="alert alert-info text-center mb-0">
                         <strong>{{ total_ads }}</strong> активных объявлений
                     </div>
-                    
-                    {% if is_own_profile %}
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="{% url 'users:profile' %}" class="btn btn-primary">
-                                <i class="bi bi-person"></i> Перейти в мой профиль
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
             
@@ -77,46 +69,12 @@
                         <div class="row">
                             {% for ad in user_ads %}
                                 <div class="col-md-6 mb-4">
-                                    <div class="card h-100 shadow-sm hover-shadow">
-                                        {% if ad.main_image %}
-                                            <img src="{{ ad.main_image.url }}" class="card-img-top" alt="{{ ad.title }}" 
-                                                 style="height: 180px; object-fit: cover;">
-                                        {% else %}
-                                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
-                                                 style="height: 180px;">
-                                                <i class="bi bi-image display-1"></i>
-                                            </div>
-                                        {% endif %}
-                                        <div class="card-body">
-                                            <h6 class="card-title">{{ ad.title|truncatechars:50 }}</h6>
-                                            <p class="card-text text-muted small">
-                                                <i class="bi bi-geo-alt"></i> {{ ad.city|default:"Город не указан" }}
-                                            </p>
-                                            <p class="card-text small">{{ ad.description|truncatewords:15 }}</p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="h6 text-primary mb-0">
-                                                    {{ ad.price|default:"Договорная" }} ₽
-                                                </span>
-                                                <span class="badge bg-info">{{ ad.get_ad_type_display }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer bg-white">
-                                            <a href="{% url 'board:ad_detail' ad.pk %}" class="btn btn-outline-primary btn-sm w-100">
-                                                Подробнее
-                                            </a>
-                                        </div>
-                                    </div>
+                                    {% include 'includes/ad_card.html' with ad=ad %}
                                 </div>
                             {% endfor %}
                         </div>
                         
-                        {% if total_ads > 12 %}
-                            <div class="text-center mt-3">
-                                <a href="{% url 'board:search' %}?author={{ profile_user.username }}" class="btn btn-outline-primary">
-                                    Показать все объявления ({{ total_ads }})
-                                </a>
-                            </div>
-                        {% endif %}
+                        {% include 'includes/pagination.html' %}
                     {% else %}
                         <div class="text-center py-5">
                             <i class="bi bi-inbox display-1 text-muted"></i>
@@ -128,14 +86,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .hover-shadow {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .hover-shadow:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-</style>
 {% endblock %}
