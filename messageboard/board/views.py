@@ -15,7 +15,7 @@ class AdListView(ListView):
     model = Ad
     template_name = 'board/ad_list.html'
     context_object_name = 'ads'
-    paginate_by = 10
+    paginate_by = 6
     
     def get_queryset(self):
         """Показываем только активные объявления, сортируем по дате"""
@@ -61,6 +61,7 @@ class AdDetailView(DetailView):
         # Похожие объявления
         context['similar_ads'] = Ad.objects.filter(
             category=ad.category,
+            # дополнительно по типу объявления
             is_active=True,
             published_until__gt=timezone.now()
         ).exclude(
@@ -150,7 +151,7 @@ class CategoryAdsListView(ListView):
     model = Ad
     template_name = 'board/category_ads.html'
     context_object_name = 'ads'
-    paginate_by = 10
+    paginate_by = 6
     
     def get_queryset(self):
         """Фильтруем объявления по slug категории"""
@@ -176,7 +177,7 @@ class SearchAdsListView(ListView):
     model = Ad
     template_name = 'board/search_results.html'
     context_object_name = 'ads'
-    paginate_by = 10
+    paginate_by = 6
     
     def get_queryset(self):
         """Реализуем поиск по заголовку, описанию, категории и городу"""

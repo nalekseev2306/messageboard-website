@@ -1,0 +1,350 @@
+[
+    {
+      "model": "users.user",
+      "pk": 5,
+      "fields": {
+        "username": "alexey",
+        "first_name": "Алексей",
+        "last_name": "Иванов",
+        "email": "alexey@example.com",
+        "phone": "+79161234567",
+        "city": "Москва",
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "date_joined": "2026-01-15T10:00:00Z"
+      }
+    },
+    {
+      "model": "users.user",
+      "pk": 6,
+      "fields": {
+        "username": "elena",
+        "first_name": "Елена",
+        "last_name": "Петрова",
+        "email": "elena@example.com",
+        "phone": "+79261234567",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "date_joined": "2026-02-20T10:00:00Z"
+      }
+    },
+    {
+      "model": "users.user",
+      "pk": 7,
+      "fields": {
+        "username": "dmitry",
+        "first_name": "Дмитрий",
+        "last_name": "Сидоров",
+        "email": "dmitry@example.com",
+        "phone": "+79361234567",
+        "city": "Новосибирск",
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "date_joined": "2026-03-10T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 5,
+      "fields": {
+        "title": "Продам 2-комнатную квартиру в центре",
+        "description": "Светлая квартира в новостройке. Ремонт, мебель, техника. Развитая инфраструктура, рядом метро.",
+        "category": 1,
+        "ad_type": "sale",
+        "price": 12500000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2026-01-20T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-01-20T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 6,
+      "fields": {
+        "title": "Сдам 1-комнатную квартиру",
+        "description": "Уютная квартира в спальном районе. Чисто, тихо. Желательно семейная пара.",
+        "category": 1,
+        "ad_type": "rent",
+        "price": 35000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2026-02-01T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-02-01T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 7,
+      "fields": {
+        "title": "Требуется программист Python",
+        "description": "В компанию требуется опытный разработчик. Удаленная работа, гибкий график.",
+        "category": 2,
+        "ad_type": "service",
+        "price": 150000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2026-02-10T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-02-10T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 8,
+      "fields": {
+        "title": "iPhone 14 Pro 256GB",
+        "description": "Телефон в идеальном состоянии. Полный комплект. Год использования.",
+        "category": 6,
+        "ad_type": "sale",
+        "price": 85000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2026-02-15T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-02-15T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 9,
+      "fields": {
+        "title": "Продам ноутбук MacBook Pro",
+        "description": "MacBook Pro 14 M1 Pro. Отличное состояние. Зарядка в комплекте.",
+        "category": 6,
+        "ad_type": "sale",
+        "price": 120000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2026-02-20T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-02-20T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 10,
+      "fields": {
+        "title": "Продам автомобиль Toyota Camry",
+        "description": "2022 год, пробег 25000 км. Полностью обслуживалась у дилера.",
+        "category": 5,
+        "ad_type": "sale",
+        "price": 3200000,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2026-02-25T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-02-25T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 11,
+      "fields": {
+        "title": "Ищу щенка хаски",
+        "description": "Ищу щенка сибирского хаски. Рассмотрю все варианты.",
+        "category": 7,
+        "ad_type": "purchase",
+        "price": null,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2026-03-01T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-03-01T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 12,
+      "fields": {
+        "title": "Услуги фотографа",
+        "description": "Профессиональная фотосъемка. Свадьбы, портреты, мероприятия.",
+        "category": 4,
+        "ad_type": "service",
+        "price": 5000,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2026-03-05T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-03-05T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 13,
+      "fields": {
+        "title": "Обменяю PlayStation 5 на Xbox",
+        "description": "PS5 в идеальном состоянии. Полный комплект. Хочу обменять на Xbox Series X.",
+        "category": 6,
+        "ad_type": "exchange",
+        "price": null,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2026-03-10T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-03-10T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 14,
+      "fields": {
+        "title": "Аренда офиса в центре",
+        "description": "Офис 50 кв.м. Отличный ремонт. Охрана, парковка.",
+        "category": 1,
+        "ad_type": "rent",
+        "price": 80000,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2026-03-15T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-03-15T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 15,
+      "fields": {
+        "title": "Продам велосипед Author",
+        "description": "Горный велосипед. Отличное состояние. Подходит для взрослых.",
+        "category": 3,
+        "ad_type": "sale",
+        "price": 25000,
+        "contact_phone": "+79361234567",
+        "contact_email": "dmitry@example.com",
+        "contact_name": "Дмитрий",
+        "city": "Новосибирск",
+        "is_active": true,
+        "author": 7,
+        "created_at": "2026-03-20T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-03-20T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 16,
+      "fields": {
+        "title": "Ремонт телефонов",
+        "description": "Быстрый и качественный ремонт смартфонов. Замена экрана, батареи.",
+        "category": 4,
+        "ad_type": "service",
+        "price": 1500,
+        "contact_phone": "+79361234567",
+        "contact_email": "dmitry@example.com",
+        "contact_name": "Дмитрий",
+        "city": "Новосибирск",
+        "is_active": true,
+        "author": 7,
+        "created_at": "2026-03-25T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-03-25T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 17,
+      "fields": {
+        "title": "Ищу работу водителем",
+        "description": "Опыт 5 лет. Категория B, C. Рассмотрю любые предложения.",
+        "category": 2,
+        "ad_type": "service",
+        "price": 60000,
+        "contact_phone": "+79361234567",
+        "contact_email": "dmitry@example.com",
+        "contact_name": "Дмитрий",
+        "city": "Новосибирск",
+        "is_active": true,
+        "author": 7,
+        "created_at": "2026-04-01T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-04-01T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 18,
+      "fields": {
+        "title": "Продам сноуборд",
+        "description": "Сноуборд Burton. Размер 155. Использовался 2 сезона.",
+        "category": 8,
+        "ad_type": "sale",
+        "price": 18000,
+        "contact_phone": "+79361234567",
+        "contact_email": "dmitry@example.com",
+        "contact_name": "Дмитрий",
+        "city": "Новосибирск",
+        "is_active": true,
+        "author": 7,
+        "created_at": "2026-04-05T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-04-05T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 19,
+      "fields": {
+        "title": "Сниму квартиру",
+        "description": "Сниму 1-комнатную квартиру на длительный срок. Без посредников.",
+        "category": 1,
+        "ad_type": "rent",
+        "price": 25000,
+        "contact_phone": "+79361234567",
+        "contact_email": "dmitry@example.com",
+        "contact_name": "Дмитрий",
+        "city": "Новосибирск",
+        "is_active": true,
+        "author": 7,
+        "created_at": "2026-04-10T10:00:00Z",
+        "updated_at": "2026-01-20T10:00:00Z",
+        "published_until": "2027-04-10T10:00:00Z"
+      }
+    }
+]

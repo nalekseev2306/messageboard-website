@@ -61,7 +61,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         )
         
         # Пагинация для объявлений
-        paginator = Paginator(all_user_ads, 10)
+        paginator = Paginator(all_user_ads, 6)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         
