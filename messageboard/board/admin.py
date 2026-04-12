@@ -85,11 +85,6 @@ class CategoryAdmin(admin.ModelAdmin):
     make_inactive.short_description = 'Деактивировать выбранные категории'
 
 
-from django.contrib import admin
-from django.utils.html import format_html
-from django.urls import reverse
-from .models import Ad, Category
-
 @admin.register(Ad)
 class AdAdmin(admin.ModelAdmin):
     """Админка для объявлений"""

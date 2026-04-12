@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row">
         <!-- Форма поиска -->
-        <div class="col-md-3 mb-4">
+        <div class="col-md-3 mb-4 mt-md-4 pt-md-5">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="bi bi-search"></i> Фильтры</h5>
@@ -75,7 +75,7 @@
             {% if ads %}
                 <div class="row">
                     {% for ad in ads %}
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-6 col-lg-4 mb-4">
                             {% include 'includes/ad_card.html' with ad=ad %}
                         </div>
                     {% endfor %}

@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Ad, Category
 
 class AdForm(forms.ModelForm):
@@ -24,6 +25,8 @@ class AdForm(forms.ModelForm):
             'ad_type': forms.Select(attrs={'class': 'form-select'}),
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
+                'min': '0',
+                'step': '1'
             }),
             'city': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -48,6 +51,19 @@ class AdForm(forms.ModelForm):
         self.fields['published_until'].help_text = 'Оставьте пустым для автоматической установки (30 дней)'
         self.fields['price'].required = False
         self.fields['price'].help_text = 'Оставьте пустым, если не требуется'
+    
+    def clean_price(self):
+        """Валидация цены"""
+        price = self.cleaned_data.get('price')
+        
+        if price is not None:
+            if price < 0:
+                raise ValidationError('Цена не может быть отрицательной.')
+            
+            if price > 999999999:
+                raise ValidationError('Цена не может превышать 999 999 999 ₽.')
+        
+        return price
 
 
 class SearchForm(forms.Form):

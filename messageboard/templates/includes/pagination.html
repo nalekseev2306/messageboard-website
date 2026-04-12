@@ -4,20 +4,20 @@
         {% if page_obj.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page=1{% if preserved_params %}&{{ preserved_params }}{% endif %}">
-                    &laquo; Первая
+                    &laquo;
                 </a>
             </li>
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if preserved_params %}&{{ preserved_params }}{% endif %}">
-                    Предыдущая
+                    <
                 </a>
             </li>
         {% else %}
             <li class="page-item disabled">
-                <span class="page-link">&laquo; Первая</span>
+                <span class="page-link">&laquo;</span>
             </li>
             <li class="page-item disabled">
-                <span class="page-link">Предыдущая</span>
+                <span class="page-link"><</span>
             </li>
         {% endif %}
         
@@ -38,20 +38,20 @@
         {% if page_obj.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if preserved_params %}&{{ preserved_params }}{% endif %}">
-                    Следующая
+                    >
                 </a>
             </li>
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if preserved_params %}&{{ preserved_params }}{% endif %}">
-                    Последняя &raquo;
+                    &raquo;
                 </a>
             </li>
         {% else %}
             <li class="page-item disabled">
-                <span class="page-link">Следующая</span>
+                <span class="page-link">></span>
             </li>
             <li class="page-item disabled">
-                <span class="page-link">Последняя &raquo;</span>
+                <span class="page-link">&raquo;</span>
             </li>
         {% endif %}
     </ul>

@@ -1,13 +1,13 @@
 {% load static %}
 
 <div class="card h-100 shadow-sm hover-shadow">
-    {% if ad.main_image and ad.main_image.url %}
+    {% comment %} {% if ad.main_image and ad.main_image.url %}
         <img src="{{ ad.main_image.url }}" 
              class="card-img-top" 
              alt="{{ ad.title }}" 
              style="height: 200px; object-fit: cover;"
              onerror="handleImageError(this)">
-    {% endif %}
+    {% endif %} {% endcomment %}
     
     <div class="card-body">
         <h5 class="card-title">{{ ad.title|truncatechars:50 }}</h5>
@@ -42,9 +42,9 @@
     }
 </style>
 
-<script>
+{% comment %} <script>
 function handleImageError(imgElement) {
     imgElement.onerror = null;
     imgElement.src = "{% static 'images/placeholder.svg' %}";
 }
-</script>
+</script> {% endcomment %}

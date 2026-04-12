@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -10,7 +11,7 @@
             <div class="card shadow-sm mb-4">
                 {% if ad.main_image %}
                     <img src="{{ ad.main_image.url }}" class="card-img-top" alt="{{ ad.title }}" 
-                         style="max-height: 500px; object-fit: contain;">
+                         style="max-height: 250px; object-fit: contain;" onerror="handleImageError(this)">
                 {% endif %}
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -129,4 +130,11 @@
         </div>
     </div>
 </div>
+
+<script>
+function handleImageError(imgElement) {
+    imgElement.onerror = null;
+    imgElement.src = "{% static 'images/placeholder.svg' %}";
+}
+</script>
 {% endblock %}

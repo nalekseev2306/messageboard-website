@@ -77,7 +77,7 @@ class Ad(models.Model):
     city = models.CharField('Город', max_length=100, blank=True, null=True)
     
     # Изображения
-    main_image = models.ImageField('Главное изображение', upload_to='ads/main/%Y/%m/', blank=True, null=True)
+    main_image = models.ImageField('Главное изображение', upload_to='ads/img/%Y/%m/', blank=True, null=True)
     
     # Статусы объявления
     is_active = models.BooleanField('Активно', default=True)
@@ -93,7 +93,6 @@ class Ad(models.Model):
     )
     
     # Статистика
-    # views_count = models.PositiveIntegerField('Просмотры', default=0)
     created_at = models.DateTimeField('Дата создания', default=timezone.now)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
     published_until = models.DateTimeField('Актуально до', blank=True, null=True)
@@ -114,16 +113,6 @@ class Ad(models.Model):
     def get_absolute_url(self):
         return reverse('board:ad_detail', kwargs={'pk': self.pk})
     
-    # def increment_views(self):
-    #     """Увеличиваем счетчик просмотров"""
-    #     self.views_count += 1
-    #     self.save(update_fields=['views_count'])
-    
-    # @property
-    # def formatted_price(self):
-    #     """Форматированная цена"""
-    #     return f'{self.price:,.0f} ₽'.replace(',', ' ')
-    
     @property
     def is_expired(self):
         """Проверка на истечение срока актуальности"""
@@ -136,19 +125,3 @@ class Ad(models.Model):
         if not self.published_until:
             self.published_until = timezone.now() + timezone.timedelta(days=30)
         super().save(*args, **kwargs)
-
-
-# class AdImage(models.Model):
-#     """Дополнительные изображения для объявления"""
-#     ad = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='images', verbose_name='Объявление')
-#     image = models.ImageField('Изображение', upload_to='ads/gallery/%Y/%m/')
-#     order = models.PositiveIntegerField('Порядок', default=0)
-#     created_at = models.DateTimeField('Дата загрузки', auto_now_add=True)
-    
-#     class Meta:
-#         verbose_name = 'Изображение'
-#         verbose_name_plural = 'Изображения'
-#         ordering = ['order', 'created_at']
-    
-#     def __str__(self):
-#         return f'Изображение для {self.ad.title}'
