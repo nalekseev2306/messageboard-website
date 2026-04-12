@@ -95,6 +95,16 @@
                             </li>
                         {% endif %}
                     </ul>
+
+                    <!-- Кнопка перехода в профиль автора -->
+                    {% if ad.author %}
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'users:public_profile' ad.author.username %}" class="btn btn-outline-primary">
+                                <i class="bi bi-person-circle"></i> Перейти в профиль автора
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             
