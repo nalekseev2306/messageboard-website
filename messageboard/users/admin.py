@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+
 from .models import User
 from board.models import Ad
 from .forms import CustomUserChangeForm, CustomUserCreationForm
@@ -98,7 +99,10 @@ class CustomUserAdmin(UserAdmin):
         ),
         (
             ('Важные даты'),
-            {'fields': ('last_login', 'date_joined'), 'classes': ('collapse',)},
+            {
+                'fields': ('last_login', 'date_joined'),
+                'classes': ('collapse',)
+            },
         ),
     )
 

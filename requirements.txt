@@ -4,6 +4,7 @@ Django==5.2.10
 django-crispy-forms==2.6
 django-debug-toolbar==6.2.0
 pillow==12.1.0
+ruff==0.15.10
 sqlparse==0.5.5
 tzdata==2025.3
 Unidecode==1.4.0

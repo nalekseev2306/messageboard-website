@@ -69,7 +69,10 @@ class Ad(models.Model):
 
     # Тип
     ad_type = models.CharField(
-        'Тип объявления', max_length=20, choices=AD_TYPE_CHOICES, default='sale'
+        'Тип объявления',
+        max_length=20,
+        choices=AD_TYPE_CHOICES,
+        default='sale'
     )
 
     # Цена
@@ -89,7 +92,10 @@ class Ad(models.Model):
 
     # Изображения
     main_image = models.ImageField(
-        'Главное изображение', upload_to='ads/img/%Y/%m/', blank=True, null=True
+        'Главное изображение',
+        upload_to='ads/img/%Y/%m/',
+        blank=True,
+        null=True
     )
 
     # Статусы объявления
@@ -200,7 +206,9 @@ class AdFile(models.Model):
         validators=[
             FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS)
         ],
-        help_text=f'Поддерживаемые форматы: {", ".join(ALLOWED_EXTENSIONS).upper()}',
+        help_text=(
+            f'Поддерживаемые форматы: {", ".join(ALLOWED_EXTENSIONS).upper()}',
+        )
     )
     file_size = models.PositiveIntegerField(
         'Размер файла (байт)', editable=False, default=0

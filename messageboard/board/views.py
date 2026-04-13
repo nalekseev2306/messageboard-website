@@ -1,10 +1,7 @@
 from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    TemplateView,
+    ListView, DetailView,
+    CreateView, UpdateView,
+    DeleteView, TemplateView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
@@ -166,7 +163,10 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if total_images > 4:
             messages.error(
                 self.request,
-                'Превышено максимальное количество изображений. Вы можете загрузить не более 4.',
+                (
+                    'Превышено максимальное количество изображений. '
+                    'Вы можете загрузить не более 4.'
+                ),
             )
             return redirect('board:ad_update', pk=ad.pk)
 
@@ -174,7 +174,10 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if total_files > 4:
             messages.error(
                 self.request,
-                'Превышено максимальное количество файлов. Вы можете загрузить не более 4.',
+                (
+                    'Превышено максимальное количество файлов. '
+                    'Вы можете загрузить не более 4.'
+                ),
             )
             return redirect('board:ad_update', pk=ad.pk)
 
@@ -324,7 +327,9 @@ class DeleteImageView(LoginRequiredMixin, View):
             )
 
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+            return JsonResponse(
+                {'success': False, 'error': str(e)}, status=500
+            )
 
 
 class DeleteFileView(LoginRequiredMixin, View):
@@ -349,7 +354,9 @@ class DeleteFileView(LoginRequiredMixin, View):
             return JsonResponse({'success': True, 'message': 'Файл удален'})
 
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+            return JsonResponse(
+                {'success': False, 'error': str(e)}, status=500
+            )
 
 
 class AboutView(TemplateView):

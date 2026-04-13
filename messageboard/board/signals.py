@@ -1,6 +1,7 @@
 from django.core.files.storage import default_storage
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+
 from .models import AdImage, AdFile
 
 
@@ -16,3 +17,8 @@ def delete_ad_file(sender, instance, **kwargs):
     """Удаляет файл при удалении записи"""
     if instance.file and default_storage.exists(instance.file.name):
         default_storage.delete(instance.file.name)
+
+
+def register_signals():
+    """Функция для регистрации сигналов"""
+    pass

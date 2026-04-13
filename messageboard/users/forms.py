@@ -1,15 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
-from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
-User = get_user_model()
+from .validators import phone_regex
 
-phone_regex = RegexValidator(
-    regex=r'^\+7\d{10}$',
-    message='Введите номер телефона в формате: +7XXXXXXXXXX',
-)
+User = get_user_model()
 
 
 class BaseUserForm(forms.ModelForm):
@@ -84,7 +80,9 @@ class BaseUserForm(forms.ModelForm):
         return self.validate_name(self.cleaned_data.get('first_name'), 'Имя')
 
     def clean_last_name(self):
-        return self.validate_name(self.cleaned_data.get('last_name'), 'Фамилия')
+        return self.validate_name(
+            self.cleaned_data.get('last_name'), 'Фамилия'
+        )
 
     class Meta:
         abstract = True
@@ -148,5 +146,7 @@ class CustomUserChangeForm(BaseUserForm, UserChangeForm):
             .exclude(pk=self.instance.pk)
             .exists()
         ):
-            raise ValidationError('Пользователь с таким именем уже существует.')
+            raise ValidationError(
+                'Пользователь с таким именем уже существует.'
+            )
         return username

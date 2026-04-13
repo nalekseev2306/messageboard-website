@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
+
 from .models import Category, Ad, AdImage, AdFile
 
 
@@ -79,7 +80,10 @@ class CategoryAdmin(admin.ModelAdmin):
     def ad_count_display(self, obj):
         count = obj.ads.filter(is_active=True).count()
         return format_html(
-            '<span style="font-size: 14px; font-weight: bold;">Всего объявлений: {}</span>',
+            (
+                '<span style="font-size: 14px; font-weight: bold;">'
+                'Всего объявлений: {}</span>'
+            ),
             count,
         )
 
@@ -110,7 +114,10 @@ class AdImageInline(admin.TabularInline):
     def image_preview(self, obj):
         if obj and obj.pk and obj.image:
             return format_html(
-                '<img src="{}" style="max-height: 80px; max-width: 100px; object-fit: cover; border-radius: 4px;" />',
+                (
+                    '<img src="{}" style="max-height: 80px; max-width: 100px; '
+                    'object-fit: cover; border-radius: 4px;" />'
+                ),
                 obj.image.url,
             )
         return '-'
@@ -302,7 +309,10 @@ class AdImageAdmin(admin.ModelAdmin):
     def image_preview(self, obj):
         if obj.pk and obj.image:
             return format_html(
-                '<img src="{}" style="max-height: 100px; max-width: 150px; object-fit: cover; border-radius: 4px;" />',
+                (
+                    '<img src="{}" style="max-height: 100px; max-width: '
+                    '150px; object-fit: cover; border-radius: 4px;" />'
+                ),
                 obj.image.url,
             )
         return 'Нет изображения'

@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+
 from .models import Ad
 
 
@@ -78,7 +79,9 @@ class AdForm(forms.ModelForm):
             'title': forms.TextInput(
                 attrs={
                     'class': 'form-control',
-                    'placeholder': 'Что-нибудь привлекательное и информативное...',
+                    'placeholder': (
+                        'Что-нибудь привлекательное и информативное...'
+                    ),
                 }
             ),
             'description': forms.Textarea(
@@ -143,7 +146,8 @@ class AdForm(forms.ModelForm):
         for image in images:
             if image.size > max_size:
                 raise ValidationError(
-                    f'Изображение "{image.name}" превышает максимальный размер 5 МБ.'
+                    f'Изображение "{image.name}" превышает '
+                    f'максимальный размер 5 МБ.'
                 )
 
             content_type = getattr(image, 'content_type', '')

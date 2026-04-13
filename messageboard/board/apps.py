@@ -6,4 +6,5 @@ class BoardConfig(AppConfig):
     name = 'board'
 
     def ready(self):
-        pass
+        from board.signals import register_signals
+        register_signals()

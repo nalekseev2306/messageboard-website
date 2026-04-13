@@ -1,6 +1,10 @@
 from django.urls import path, include, reverse_lazy
 from django.contrib.auth import views as auth_views
-from .views import RegisterView, ProfileView, ProfileEditView, PublicProfileView
+
+from .views import (
+    RegisterView, ProfileView,
+    ProfileEditView, PublicProfileView
+)
 
 app_name = 'users'
 
