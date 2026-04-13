@@ -51,13 +51,13 @@ class AdForm(forms.ModelForm):
     images = MultipleFileField(
         label='Изображения',
         required=False,
-        help_text='Выберите до 5 изображений (JPG, PNG, GIF)'
+        help_text='Выберите до 4 изображений (JPG, PNG, GIF)'
     )
     
     files = MultipleFileField(
         label='Дополнительные файлы',
         required=False,
-        help_text='Можно загрузить несколько файлов (PDF, DOC, TXT, XLS)'
+        help_text='Выберите до 4 файлов (PDF, DOC, TXT, XLS)'
     )
 
     class Meta:
@@ -115,10 +115,10 @@ class AdForm(forms.ModelForm):
         """Валидация количества и размера изображений"""
         images = self.cleaned_data.get('images', [])
         
-        if len(images) > 5:
-            raise ValidationError('Можно загрузить не более 5 изображений.')
+        if len(images) > 4:
+            raise ValidationError('Можно загрузить не более 4 изображений.')
         
-        max_size = 5 * 1024 * 1024  # 5 MB для изображений
+        max_size = 5 * 1024 * 1024
         for image in images:
             if image.size > max_size:
                 raise ValidationError(f'Изображение "{image.name}" превышает максимальный размер 5 МБ.')
@@ -129,10 +129,10 @@ class AdForm(forms.ModelForm):
         """Валидация файлов"""
         files = self.cleaned_data.get('files', [])
         
-        if len(files) > 5:
-            raise ValidationError('Можно загрузить не более 5 файлов.')
+        if len(files) > 4:
+            raise ValidationError('Можно загрузить не более 4 файлов.')
         
-        max_size = 10 * 1024 * 1024  # 10 MB
+        max_size = 10 * 1024 * 1024
         for file in files:
             if file.size > max_size:
                 raise ValidationError(f'Файл "{file.name}" превышает максимальный размер 10 МБ.')

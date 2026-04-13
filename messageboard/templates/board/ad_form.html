@@ -110,6 +110,30 @@
                             {% endif %}
                         </div>
                         
+                        <!-- Загруженные изображения -->
+                        {% if existing_images %}
+                            <div class="mb-3">
+                                <label class="form-label">Загруженные изображения</label>
+                                <div class="row">
+                                    {% for img in existing_images %}
+                                        <div class="col-md-3 mb-2 position-relative">
+                                            <div class="card">
+                                                <img src="{{ img.image.url }}" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                                <div class="card-body p-1 text-center">
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-danger mt-1 delete-image" 
+                                                            data-url="{% url 'board:delete_image' img.pk %}"
+                                                            data-image-id="{{ img.pk }}">
+                                                        <i class="bi bi-trash"></i> Удалить
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
                         <!-- Изображения -->
                         <div class="mb-3">
                             <label for="{{ form.images.id_for_label }}" class="form-label">
@@ -128,6 +152,38 @@
                             {% endif %}
                         </div>
                         
+                        <!-- Загруженные файлы -->
+                        {% if existing_files %}
+                            <div class="mb-3">
+                                <label class="form-label">Загруженные файлы</label>
+                                <div class="list-group">
+                                    {% for file in existing_files %}
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="bi bi-file-earmark-{{ file.file_extension }} me-2"></i>
+                                                <a href="{{ file.file.url }}" target="_blank">{{ file.get_filename }}</a>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ file.file_extension|upper }} • 
+                                                    {% if file.file_size < 1024 %}
+                                                        {{ file.file_size }} байт
+                                                    {% else %}
+                                                        {{ file.file_size|filesizeformat }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-danger delete-file" 
+                                                    data-url="{% url 'board:delete_file' file.pk %}"
+                                                    data-file-id="{{ file.pk }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
                         <!-- Файлы -->
                         <div class="mb-3">
                             <label for="{{ form.files.id_for_label }}" class="form-label">
@@ -160,4 +216,56 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Удаление изображения через AJAX
+document.querySelectorAll('.delete-image').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirm('Вы уверены, что хотите удалить это изображение?')) {
+            const url = this.dataset.url;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            });
+        }
+    });
+});
+
+// Удаление файла через AJAX
+document.querySelectorAll('.delete-file').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirm('Вы уверены, что хотите удалить этот файл?')) {
+            const url = this.dataset.url;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

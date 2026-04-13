@@ -19,4 +19,8 @@ urlpatterns = [
     
     # Поиск
     path('search/', views.SearchAdsListView.as_view(), name='search'),
+
+    # Удаление
+    path('image/<int:pk>/delete/', views.DeleteImageView.as_view(), name='delete_image'),
+    path('file/<int:pk>/delete/', views.DeleteFileView.as_view(), name='delete_file'),
 ]

@@ -201,8 +201,6 @@ class AdFile(models.Model):
     
     def get_filename(self):
         """Возвращает имя файла"""
-        if self.title:
-            return self.title
         return self.file.name.split('/')[-1]
     
     def save(self, *args, **kwargs):

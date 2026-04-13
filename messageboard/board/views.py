@@ -1,3 +1,4 @@
+import os
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
@@ -5,6 +6,9 @@ from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import Q, Count
 from django.utils import timezone
+from django.http import JsonResponse
+from django.views import View
+from django.core.files.storage import default_storage
 
 from .models import Ad, Category, AdImage, AdFile
 from .forms import AdForm
@@ -139,21 +143,40 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         ad = form.save()
         
-        images = self.request.FILES.getlist('images')
-        for idx, img in enumerate(images):
+        existing_images_count = ad.images.count()
+        existing_files_count = ad.files.count()
+        new_images = self.request.FILES.getlist('images')
+        new_files = self.request.FILES.getlist('files')
+        
+        total_images = existing_images_count + len(new_images)
+        if total_images > 4:
+            messages.error(
+                self.request, 
+                'Превышено максимальное количество изображений. Вы можете загрузить не более 4.'
+            )
+            return redirect('board:ad_update', pk=ad.pk)
+        
+        total_files = existing_files_count + len(new_files)
+        if total_files > 4:
+            messages.error(
+                self.request, 
+                'Превышено максимальное количество файлов. Вы можете загрузить не более 4.'
+            )
+            return redirect('board:ad_update', pk=ad.pk)
+        
+        for idx, img in enumerate(new_images):
             AdImage.objects.create(
                 ad=ad,
                 image=img,
                 is_main=False,
-                order=ad.images.count() + idx
+                order=existing_images_count + idx
             )
         
-        files = self.request.FILES.getlist('files')
-        for idx, file in enumerate(files):
+        for idx, file in enumerate(new_files):
             AdFile.objects.create(
                 ad=ad,
                 file=file,
-                order=ad.files.count() + idx
+                order=existing_files_count + idx
             )
         
         messages.success(self.request, 'Объявление успешно обновлено!')
@@ -168,13 +191,13 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class AdDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """Удаление объявления (только для автора)"""
+    """Удаление объявления"""
     model = Ad
     template_name = 'board/ad_confirm_delete.html'
     success_url = reverse_lazy('board:ad_list')
     
     def test_func(self):
-        """Проверка: только автор или админ может удалить"""
+        """Только автор или админ может удалить"""
         ad = self.get_object()
         return self.request.user.is_staff or ad.author == self.request.user
     
@@ -255,6 +278,49 @@ class SearchAdsListView(ListView):
         context['ad_types'] = Ad.AD_TYPE_CHOICES
         context['title'] = f'Поиск: {self.query}' if self.query else 'Поиск объявлений'
         return context
+
+
+class DeleteImageView(LoginRequiredMixin, View):
+    """Удаление изображения из БД и из media"""
+    def post(self, request, pk):
+        try:
+            image = get_object_or_404(AdImage, pk=pk)
+            ad = image.ad
+            
+            if request.user != ad.author and not request.user.is_staff:
+                return JsonResponse({'success': False, 'error': 'У вас нет прав на удаление'}, status=403)
+            
+            file_path = image.image.name
+            if default_storage.exists(file_path):
+                default_storage.delete(file_path)
+            
+            image.delete()
+            
+            return JsonResponse({'success': True, 'message': 'Изображение удалено'})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+class DeleteFileView(LoginRequiredMixin, View):
+    """Удаление файла из БД и из media"""
+    def post(self, request, pk):
+        try:
+            file_obj = get_object_or_404(AdFile, pk=pk)
+            ad = file_obj.ad
+            
+            if request.user != ad.author and not request.user.is_staff:
+                return JsonResponse({'success': False, 'error': 'У вас нет прав на удаление'}, status=403)
+            
+            file_path = file_obj.file.name
+            if default_storage.exists(file_path):
+                default_storage.delete(file_path)
+            
+            file_obj.delete()
+            return JsonResponse({'success': True, 'message': 'Файл удален'})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 class AboutView(TemplateView):
