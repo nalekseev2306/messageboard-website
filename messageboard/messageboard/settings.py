@@ -136,5 +136,3 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Для отправки email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
-
-# разобраться с проблемой загрузки медиафайлов в пост запросе

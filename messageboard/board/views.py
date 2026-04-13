@@ -1,4 +1,3 @@
-import os
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
@@ -56,13 +55,13 @@ class AdDetailView(DetailView):
         return Ad.objects.filter(
             is_active=True,
             published_until__gt=timezone.now()
-        ).select_related('category', 'author')
+        ).select_related('category', 'author').prefetch_related('images', 'files')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         ad = self.get_object()
         
-        # Похожие объявления
+        # Похожие объявления (по категории и типу)
         context['similar_ads'] = Ad.objects.filter(
             category=ad.category,
             ad_type=ad.ad_type,
@@ -72,7 +71,10 @@ class AdDetailView(DetailView):
             pk=ad.pk
         ).select_related('category')[:4]
         
+        context['images_count'] = ad.images.count()
+        context['files_count'] = ad.files.count()
         context['title'] = f'{ad.title} - Доска объявлений'
+                
         return context
 
 

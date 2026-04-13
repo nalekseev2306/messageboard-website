@@ -52,6 +52,60 @@
                 </div>
             </div>
             
+            <!-- Галерея изображений -->
+            {% if ad.images.exists %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="bi bi-images"></i> Изображения</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for img in ad.images.all %}
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ img.image.url }}" data-lightbox="ad-gallery" data-title="{{ ad.title }}">
+                                        <img src="{{ img.image.url }}" class="img-fluid rounded" 
+                                             style="height: 120px; width: 100%; object-fit: cover;"
+                                             alt="Изображение {{ forloop.counter }}" onerror="handleImageError(this)">
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Дополнительные файлы -->
+            {% if ad.files.exists %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="bi bi-paperclip"></i> Прикрепленные файлы</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for file in ad.files.all %}
+                                <a href="{{ file.file.url }}" class="list-group-item list-group-item-action d-flex align-items-center" download>
+                                    <i class="bi bi-file-earmark-{{ file.file_extension }} fs-4 me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <strong>{{ file.get_filename }}</strong><br>
+                                        <small class="text-muted">
+                                            {{ file.file_extension|upper }} • 
+                                            {% if file.file_size < 1024 %}
+                                                {{ file.file_size }} байт
+                                            {% elif file.file_size < 1048576 %}
+                                                {{ file.file_size|filesizeformat }}
+                                            {% else %}
+                                                {{ file.file_size|filesizeformat }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    <i class="bi bi-download fs-5"></i>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
             <!-- Похожие объявления -->
             {% if similar_ads %}
                 <div class="card shadow-sm">
@@ -143,4 +197,14 @@ function handleImageError(imgElement) {
     imgElement.src = "{% static 'images/placeholder.svg' %}";
 }
 </script>
+
+<!-- Lightbox для просмотра изображений -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox-plus-jquery.min.js"></script>
+
+<style>
+    .lightbox img {
+        cursor: pointer;
+    }
+</style>
 {% endblock %}
