@@ -1,0 +1,9 @@
+# ruff.toml
+line-length = 80
+
+[lint]
+ignore = ["E501"]
+
+[format]
+quote-style = "single"
+indent-style = "space"

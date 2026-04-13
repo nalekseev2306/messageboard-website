@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('board', '0002_alter_ad_main_image'),
     ]
@@ -15,13 +14,73 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AdFile',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(help_text='Поддерживаемые форматы: PDF, TXT, DOC, DOCX, XLS, XLSX', upload_to='ads/files/%Y/%m/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx'])], verbose_name='Файл')),
-                ('title', models.CharField(blank=True, help_text='Оставьте пустым для автоматического названия', max_length=100, verbose_name='Название файла')),
-                ('file_size', models.PositiveIntegerField(default=0, editable=False, verbose_name='Размер файла (байт)')),
-                ('order', models.PositiveIntegerField(default=0, verbose_name='Порядок')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки')),
-                ('ad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='files', to='board.ad', verbose_name='Объявление')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'file',
+                    models.FileField(
+                        help_text='Поддерживаемые форматы: PDF, TXT, DOC, DOCX, XLS, XLSX',
+                        upload_to='ads/files/%Y/%m/',
+                        validators=[
+                            django.core.validators.FileExtensionValidator(
+                                allowed_extensions=[
+                                    'pdf',
+                                    'txt',
+                                    'doc',
+                                    'docx',
+                                    'xls',
+                                    'xlsx',
+                                ]
+                            )
+                        ],
+                        verbose_name='Файл',
+                    ),
+                ),
+                (
+                    'title',
+                    models.CharField(
+                        blank=True,
+                        help_text='Оставьте пустым для автоматического названия',
+                        max_length=100,
+                        verbose_name='Название файла',
+                    ),
+                ),
+                (
+                    'file_size',
+                    models.PositiveIntegerField(
+                        default=0,
+                        editable=False,
+                        verbose_name='Размер файла (байт)',
+                    ),
+                ),
+                (
+                    'order',
+                    models.PositiveIntegerField(
+                        default=0, verbose_name='Порядок'
+                    ),
+                ),
+                (
+                    'created_at',
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name='Дата загрузки'
+                    ),
+                ),
+                (
+                    'ad',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='files',
+                        to='board.ad',
+                        verbose_name='Объявление',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Файл',
@@ -32,18 +91,62 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AdImage',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(help_text='Поддерживаются форматы: JPG, PNG, GIF', upload_to='ads/img/%Y/%m/', verbose_name='Изображение')),
-                ('is_main', models.BooleanField(default=False, verbose_name='Главное изображение')),
-                ('order', models.PositiveIntegerField(default=0, verbose_name='Порядок')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки')),
-                ('ad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='board.ad', verbose_name='Объявление')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'image',
+                    models.ImageField(
+                        help_text='Поддерживаются форматы: JPG, PNG, GIF',
+                        upload_to='ads/img/%Y/%m/',
+                        verbose_name='Изображение',
+                    ),
+                ),
+                (
+                    'is_main',
+                    models.BooleanField(
+                        default=False, verbose_name='Главное изображение'
+                    ),
+                ),
+                (
+                    'order',
+                    models.PositiveIntegerField(
+                        default=0, verbose_name='Порядок'
+                    ),
+                ),
+                (
+                    'created_at',
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name='Дата загрузки'
+                    ),
+                ),
+                (
+                    'ad',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='images',
+                        to='board.ad',
+                        verbose_name='Объявление',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Изображение',
                 'verbose_name_plural': 'Изображения',
                 'ordering': ['order', 'created_at'],
-                'constraints': [models.UniqueConstraint(condition=models.Q(('is_main', True)), fields=('ad', 'is_main'), name='unique_main_image_per_ad')],
+                'constraints': [
+                    models.UniqueConstraint(
+                        condition=models.Q(('is_main', True)),
+                        fields=('ad', 'is_main'),
+                        name='unique_main_image_per_ad',
+                    )
+                ],
             },
         ),
     ]

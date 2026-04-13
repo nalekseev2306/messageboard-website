@@ -48,6 +48,22 @@
       }
     },
     {
+      "model": "users.user",
+      "pk": 8,
+      "fields": {
+        "username": "marina",
+        "first_name": "Марина",
+        "last_name": "Козлова",
+        "email": "marina@example.com",
+        "phone": "+79461234567",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "date_joined": "2026-04-01T10:00:00Z"
+      }
+    },
+    {
       "model": "board.ad",
       "pk": 5,
       "fields": {
@@ -345,6 +361,226 @@
         "created_at": "2026-04-10T10:00:00Z",
         "updated_at": "2026-01-20T10:00:00Z",
         "published_until": "2027-04-10T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 20,
+      "fields": {
+        "title": "Продам гитару Fender",
+        "description": "Электрогитара Fender Stratocaster. В отличном состоянии. Чехол и комплектующие в подарок.",
+        "category": 8,
+        "ad_type": "sale",
+        "price": 45000,
+        "contact_phone": "+79461234567",
+        "contact_email": "marina@example.com",
+        "contact_name": "Марина",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "author": 8,
+        "created_at": "2026-04-15T10:00:00Z",
+        "updated_at": "2026-04-15T10:00:00Z",
+        "published_until": "2027-04-15T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 21,
+      "fields": {
+        "title": "Репетитор по английскому языку",
+        "description": "Опытный преподаватель. Подготовка к ЕГЭ, IELTS, бизнес-английский. Индивидуальный подход.",
+        "category": 4,
+        "ad_type": "service",
+        "price": 2000,
+        "contact_phone": "+79461234567",
+        "contact_email": "marina@example.com",
+        "contact_name": "Марина",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "author": 8,
+        "created_at": "2026-04-18T10:00:00Z",
+        "updated_at": "2026-04-18T10:00:00Z",
+        "published_until": "2027-04-18T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 22,
+      "fields": {
+        "title": "Продам детскую коляску",
+        "description": "Коляска-трансформер. Хорошее состояние. Много места для покупок.",
+        "category": 3,
+        "ad_type": "sale",
+        "price": 8000,
+        "contact_phone": "+79461234567",
+        "contact_email": "marina@example.com",
+        "contact_name": "Марина",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "author": 8,
+        "created_at": "2026-04-20T10:00:00Z",
+        "updated_at": "2026-04-20T10:00:00Z",
+        "published_until": "2027-04-20T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 23,
+      "fields": {
+        "title": "Срочно продам холодильник",
+        "description": "Холодильник LG, 2 года. Работает отлично. Переезжаю, нужно продать.",
+        "category": 3,
+        "ad_type": "sale",
+        "price": 15000,
+        "contact_phone": "+79461234567",
+        "contact_email": "marina@example.com",
+        "contact_name": "Марина",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "author": 8,
+        "created_at": "2026-04-22T10:00:00Z",
+        "updated_at": "2026-04-22T10:00:00Z",
+        "published_until": "2027-04-22T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 24,
+      "fields": {
+        "title": "Сдаю студию в центре",
+        "description": "Современная студия. Евроремонт. Вся техника. Подходит для 1-2 человек.",
+        "category": 1,
+        "ad_type": "rent",
+        "price": 45000,
+        "contact_phone": "+79461234567",
+        "contact_email": "marina@example.com",
+        "contact_name": "Марина",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "author": 8,
+        "created_at": "2026-04-25T10:00:00Z",
+        "updated_at": "2026-04-25T10:00:00Z",
+        "published_until": "2027-04-25T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 25,
+      "fields": {
+        "title": "Продам старый ноутбук",
+        "description": "Старый ноутбук Acer. Работает медленно. Для запчастей или ремонта.",
+        "category": 6,
+        "ad_type": "sale",
+        "price": 3000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2025-01-01T10:00:00Z",
+        "updated_at": "2025-01-01T10:00:00Z",
+        "published_until": "2025-01-31T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 26,
+      "fields": {
+        "title": "Ищу соседа",
+        "description": "Сниму комнату или квартиру с соседом. Рассмотрю варианты.",
+        "category": 1,
+        "ad_type": "rent",
+        "price": 15000,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2025-02-01T10:00:00Z",
+        "updated_at": "2025-02-01T10:00:00Z",
+        "published_until": "2025-03-01T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 27,
+      "fields": {
+        "title": "Продам учебники",
+        "description": "Учебники по программированию. В хорошем состоянии.",
+        "category": 3,
+        "ad_type": "sale",
+        "price": 2000,
+        "contact_phone": "+79361234567",
+        "contact_email": "dmitry@example.com",
+        "contact_name": "Дмитрий",
+        "city": "Новосибирск",
+        "is_active": true,
+        "author": 7,
+        "created_at": "2025-03-01T10:00:00Z",
+        "updated_at": "2025-03-01T10:00:00Z",
+        "published_until": "2025-03-30T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 28,
+      "fields": {
+        "title": "Старый телевизор",
+        "description": "ЖК телевизор Samsung. Экран не работает. Отдам за самовывоз.",
+        "category": 6,
+        "ad_type": "sale",
+        "price": 1000,
+        "contact_phone": "+79461234567",
+        "contact_email": "marina@example.com",
+        "contact_name": "Марина",
+        "city": "Екатеринбург",
+        "is_active": true,
+        "author": 8,
+        "created_at": "2025-04-01T10:00:00Z",
+        "updated_at": "2025-04-01T10:00:00Z",
+        "published_until": "2025-04-30T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 29,
+      "fields": {
+        "title": "Велосипед детский",
+        "description": "Детский велосипед. Ребенок вырос. Состояние нормальное.",
+        "category": 3,
+        "ad_type": "sale",
+        "price": 3000,
+        "contact_phone": "+79161234567",
+        "contact_email": "alexey@example.com",
+        "contact_name": "Алексей",
+        "city": "Москва",
+        "is_active": true,
+        "author": 5,
+        "created_at": "2025-05-01T10:00:00Z",
+        "updated_at": "2025-05-01T10:00:00Z",
+        "published_until": "2025-05-31T10:00:00Z"
+      }
+    },
+    {
+      "model": "board.ad",
+      "pk": 30,
+      "fields": {
+        "title": "Курсы английского",
+        "description": "Предлагаю курсы английского онлайн. Скидка 50% при оплате за месяц.",
+        "category": 4,
+        "ad_type": "service",
+        "price": 5000,
+        "contact_phone": "+79261234567",
+        "contact_email": "elena@example.com",
+        "contact_name": "Елена",
+        "city": "Санкт-Петербург",
+        "is_active": true,
+        "author": 6,
+        "created_at": "2025-06-01T10:00:00Z",
+        "updated_at": "2025-06-01T10:00:00Z",
+        "published_until": "2025-06-30T10:00:00Z"
       }
     }
 ]

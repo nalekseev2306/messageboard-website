@@ -19,7 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-85m#!&i*wddysz48g(u$zems^5h1o156c-1(tgc-*(nu1hq(%x'
+SECRET_KEY = (
+    'django-insecure-85m#!&i*wddysz48g(u$zems^5h1o156c-1(tgc-*(nu1hq(%x'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,14 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     # Дополнительные приложения для удобства
-    'crispy_forms',        # для красивых форм
-    'crispy_bootstrap5',   # для Bootstrap 5
-    
+    'crispy_forms',  # для красивых форм
+    'crispy_bootstrap5',  # для Bootstrap 5
     # Наши приложение
     'board',
-    'users'
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -130,8 +130,8 @@ LOGIN_REDIRECT_URL = 'board:ad_list'
 LOGOUT_REDIRECT_URL = 'board:ad_list'
 
 # Настройки для crispy-forms (Bootstrap 5)
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 # Для отправки email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

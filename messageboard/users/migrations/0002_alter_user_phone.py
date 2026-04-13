@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('users', '0001_initial'),
     ]
@@ -14,6 +13,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='phone',
-            field=models.CharField(blank=True, help_text='В формате +7XXXXXXXXXX', max_length=12, null=True, unique=True, validators=[django.core.validators.RegexValidator(message='Номер телефона должен быть в формате: +7XXXXXXXXXX', regex='^\\+7\\d{10}$')], verbose_name='Телефон'),
+            field=models.CharField(
+                blank=True,
+                help_text='В формате +7XXXXXXXXXX',
+                max_length=12,
+                null=True,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message='Номер телефона должен быть в формате: +7XXXXXXXXXX',
+                        regex='^\\+7\\d{10}$',
+                    )
+                ],
+                verbose_name='Телефон',
+            ),
         ),
     ]

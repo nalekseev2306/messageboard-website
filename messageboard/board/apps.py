@@ -6,4 +6,4 @@ class BoardConfig(AppConfig):
     name = 'board'
 
     def ready(self):
-        import board.signals
+        pass
