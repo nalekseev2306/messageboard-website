@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, FileExtensionValidator
 from django.utils.text import slugify
 from unidecode import unidecode
 
@@ -125,3 +125,93 @@ class Ad(models.Model):
         if not self.published_until:
             self.published_until = timezone.now() + timezone.timedelta(days=30)
         super().save(*args, **kwargs)
+
+
+class AdImage(models.Model):
+    """Изображения для объявления"""
+
+    ad = models.ForeignKey(
+        Ad, 
+        on_delete=models.CASCADE, 
+        related_name='images',
+        verbose_name='Объявление'
+    )
+    image = models.ImageField(
+        'Изображение', 
+        upload_to='ads/img/%Y/%m/',
+        help_text='Поддерживаются форматы: JPG, PNG, GIF'
+    )
+    is_main = models.BooleanField('Главное изображение', default=False)
+    order = models.PositiveIntegerField('Порядок', default=0)
+    created_at = models.DateTimeField('Дата загрузки', auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображения'
+        ordering = ['order', 'created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ad', 'is_main'],
+                condition=models.Q(is_main=True),
+                name='unique_main_image_per_ad'
+            )
+        ]
+    
+    def __str__(self):
+        return f'Изображение {self.order + 1} для {self.ad.title}'
+    
+    def save(self, *args, **kwargs):
+        if self.is_main:
+            AdImage.objects.filter(ad=self.ad, is_main=True).update(is_main=False)
+        super().save(*args, **kwargs)
+
+
+class AdFile(models.Model):
+    """Файлы для объявления (PDF, DOC, TXT и т.д.)"""
+    
+    ALLOWED_EXTENSIONS = [
+        'pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx'
+    ]
+    
+    ad = models.ForeignKey(
+        Ad, 
+        on_delete=models.CASCADE, 
+        related_name='files',
+        verbose_name='Объявление'
+    )
+    file = models.FileField(
+        'Файл',
+        upload_to='ads/files/%Y/%m/',
+        validators=[
+            FileExtensionValidator(allowed_extensions=ALLOWED_EXTENSIONS)
+        ],
+        help_text=f'Поддерживаемые форматы: {", ".join(ALLOWED_EXTENSIONS).upper()}'
+    )
+    file_size = models.PositiveIntegerField('Размер файла (байт)', editable=False, default=0)
+    order = models.PositiveIntegerField('Порядок', default=0)
+    created_at = models.DateTimeField('Дата загрузки', auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Файл'
+        verbose_name_plural = 'Файлы'
+        ordering = ['order', 'created_at']
+    
+    def __str__(self):
+        return f'Файл для {self.ad.title}: {self.get_filename()}'
+    
+    def get_filename(self):
+        """Возвращает имя файла"""
+        if self.title:
+            return self.title
+        return self.file.name.split('/')[-1]
+    
+    def save(self, *args, **kwargs):
+        if self.file and hasattr(self.file, 'size'):
+            self.file_size = self.file.size
+        super().save(*args, **kwargs)
+    
+    @property
+    def file_extension(self):
+        """Возвращает расширение файла"""
+        name = self.file.name
+        return name.split('.')[-1].lower() if '.' in name else ''

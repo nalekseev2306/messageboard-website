@@ -30,7 +30,13 @@
                     
                     <div class="mb-4">
                         <h5><i class="bi bi-geo-alt"></i> Местоположение</h5>
-                        <p class="mb-0">{{ ad.city }}</p>
+                        <p class="mb-0">
+                            {% if ad.city %}
+                                {{ ad.city }}
+                            {% else %}
+                                Город не указан
+                            {% endif %}
+                        </p>
                     </div>
                     
                     <div class="mb-4">

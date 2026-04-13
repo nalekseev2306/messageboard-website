@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.utils import timezone
 
-from .models import Ad, Category
+from .models import Ad, Category, AdImage, AdFile
 from .forms import AdForm
 
 
@@ -91,8 +91,25 @@ class AdCreateView(LoginRequiredMixin, CreateView):
         ad.contact_phone = self.request.user.phone
         ad.contact_email = self.request.user.email
         ad.contact_name = self.request.user.get_full_name()
-        
         ad.save()
+
+        images = self.request.FILES.getlist('images')
+        for idx, img in enumerate(images):
+            AdImage.objects.create(
+                ad=ad,
+                image=img,
+                is_main=False,
+                order=ad.images.count() + idx
+            )
+        
+        files = self.request.FILES.getlist('files')
+        for idx, file in enumerate(files):
+            AdFile.objects.create(
+                ad=ad,
+                file=file,
+                order=ad.files.count() + idx
+            )
+
         messages.success(self.request, 'Ваше объявление успешно опубликовано!')
         return redirect('board:ad_detail', pk=ad.pk)
     
@@ -102,7 +119,7 @@ class AdCreateView(LoginRequiredMixin, CreateView):
 
 
 class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    """Редактирование объявления (только для автора)"""
+    """Редактирование объявления"""
     model = Ad
     form_class = AdForm
     template_name = 'board/ad_form.html'
@@ -111,16 +128,36 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Редактировать объявление'
         context['button_text'] = 'Сохранить изменения'
+        context['existing_images'] = self.object.images.all()
+        context['existing_files'] = self.object.files.all()
         return context
     
     def test_func(self):
-        """Проверка: только автор или админ может редактировать"""
         ad = self.get_object()
         return self.request.user.is_staff or ad.author == self.request.user
     
     def form_valid(self, form):
+        ad = form.save()
+        
+        images = self.request.FILES.getlist('images')
+        for idx, img in enumerate(images):
+            AdImage.objects.create(
+                ad=ad,
+                image=img,
+                is_main=False,
+                order=ad.images.count() + idx
+            )
+        
+        files = self.request.FILES.getlist('files')
+        for idx, file in enumerate(files):
+            AdFile.objects.create(
+                ad=ad,
+                file=file,
+                order=ad.files.count() + idx
+            )
+        
         messages.success(self.request, 'Объявление успешно обновлено!')
-        return super().form_valid(form)
+        return redirect('board:ad_detail', pk=ad.pk)
     
     def form_invalid(self, form):
         messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме')

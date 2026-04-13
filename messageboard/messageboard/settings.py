@@ -137,4 +137,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
-# добавить кнопку откликнуться для карточки объявления и логику для взаимодействия пользователя и автора
+# разобраться с проблемой загрузки медиафайлов в пост запросе

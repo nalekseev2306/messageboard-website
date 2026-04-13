@@ -2,14 +2,69 @@ from django import forms
 from django.core.exceptions import ValidationError
 from .models import Ad, Category
 
+class MultipleFileInput(forms.ClearableFileInput):
+    """Кастомный виджет для загрузки нескольких файлов"""
+    allow_multiple_selected = True
+    
+    def __init__(self, attrs=None):
+        default_attrs = {'class': 'form-control'}
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(default_attrs)
+
+    def value_from_datadict(self, data, files, name):
+        """Возвращаем список всех загруженных файлов"""
+        if hasattr(files, 'getlist'):
+            return files.getlist(name)
+        return [files.get(name)]
+
+
+class MultipleFileField(forms.FileField):
+    """Кастомное поле для работы со списком файлов"""
+    def __init__(self, *args, **kwargs):
+        attrs = kwargs.pop('attrs', {})
+        kwargs.setdefault("widget", MultipleFileInput(attrs))
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        """Обрабатываем список файлов вместо одного"""
+        if not data:
+            return []
+        
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = []
+            for d in data:
+                if d:
+                    cleaned = single_file_clean(d, initial)
+                    if cleaned:
+                        result.append(cleaned)
+            return result
+        else:
+            result = single_file_clean(data, initial)
+            return [result] if result else []
+
+
 class AdForm(forms.ModelForm):
     """Форма объявления"""
+
+    images = MultipleFileField(
+        label='Изображения',
+        required=False,
+        help_text='Выберите до 5 изображений (JPG, PNG, GIF)'
+    )
+    
+    files = MultipleFileField(
+        label='Дополнительные файлы',
+        required=False,
+        help_text='Можно загрузить несколько файлов (PDF, DOC, TXT, XLS)'
+    )
 
     class Meta:
         model = Ad
         fields = [
             'title', 'description', 'category', 'ad_type',
-            'price', 'city', 'published_until', 'main_image'
+            'price', 'city', 'published_until'
         ]
         widgets = {
             'title': forms.TextInput(attrs={
@@ -36,17 +91,11 @@ class AdForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date',
                 'placeholder': 'ГГГГ-ММ-ДД'
-            }),
-            'main_image': forms.FileInput(attrs={
-                'class': 'form-control',
-                'accept': 'image/*'
-            }),
+            })
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Делаем некоторые поля необязательными
-        self.fields['main_image'].required = False
         self.fields['published_until'].required = False
         self.fields['published_until'].help_text = 'Оставьте пустым для автоматической установки (30 дней)'
         self.fields['price'].required = False
@@ -55,15 +104,39 @@ class AdForm(forms.ModelForm):
     def clean_price(self):
         """Валидация цены"""
         price = self.cleaned_data.get('price')
-        
         if price is not None:
             if price < 0:
                 raise ValidationError('Цена не может быть отрицательной.')
-            
             if price > 999999999:
                 raise ValidationError('Цена не может превышать 999 999 999 ₽.')
-        
         return price
+    
+    def clean_images(self):
+        """Валидация количества и размера изображений"""
+        images = self.cleaned_data.get('images', [])
+        
+        if len(images) > 5:
+            raise ValidationError('Можно загрузить не более 5 изображений.')
+        
+        max_size = 5 * 1024 * 1024  # 5 MB для изображений
+        for image in images:
+            if image.size > max_size:
+                raise ValidationError(f'Изображение "{image.name}" превышает максимальный размер 5 МБ.')
+        
+        return images
+    
+    def clean_files(self):
+        """Валидация файлов"""
+        files = self.cleaned_data.get('files', [])
+        
+        if len(files) > 5:
+            raise ValidationError('Можно загрузить не более 5 файлов.')
+        
+        max_size = 10 * 1024 * 1024  # 10 MB
+        for file in files:
+            if file.size > max_size:
+                raise ValidationError(f'Файл "{file.name}" превышает максимальный размер 10 МБ.')
+        return files
 
 
 class SearchForm(forms.Form):

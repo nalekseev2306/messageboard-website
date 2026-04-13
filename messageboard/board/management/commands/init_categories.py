@@ -9,7 +9,7 @@ class Command(BaseCommand):
             {'name': 'Недвижимость', 'order': 1},
             {'name': 'Работа', 'order': 2},
             {'name': 'Товары', 'order': 3},
-            {'name': 'Услуги', 'order': 4},
+            {'name': 'Спорт', 'order': 4},
             {'name': 'Транспорт', 'order': 5},
             {'name': 'Электроника', 'order': 6},
             {'name': 'Животные', 'order': 7},
