@@ -52,6 +52,23 @@ class MultipleFileField(forms.FileField):
 class AdForm(forms.ModelForm):
     """Форма объявления"""
 
+    ALLOWED_IMAGE_TYPES = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+        ]
+    ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+
+    ALLOWED_FILE_EXTENSIONS = [
+            '.pdf', '.txt', '.doc',
+            '.docx', '.xls', '.xlsx',
+            '.zip', '.rar',
+        ]
+    ALLOWED_VIDEO_EXTENSIONS = ['mp4', 'webm', 'mov',]
+    MAX_VIDEO_SIZE = 50 * 1024 * 1024
+    MAX_FILE_SIZE = 10 * 1024 * 1024
+
     images = MultipleFileField(
         label='Изображения',
         required=False,
@@ -61,7 +78,7 @@ class AdForm(forms.ModelForm):
     files = MultipleFileField(
         label='Дополнительные файлы',
         required=False,
-        help_text='Выберите до 4 файлов (PDF, DOC, TXT, XLS, ZIP)',
+        help_text='Выберите до 4 файлов (PDF, DOC, XLS, ZIP, MP4)',
     )
 
     class Meta:
@@ -131,40 +148,30 @@ class AdForm(forms.ModelForm):
         """Валидация количества, размера и типа изображений"""
         images = self.cleaned_data.get('images', [])
 
-        ALLOWED_IMAGE_TYPES = [
-            'image/jpeg',
-            'image/png',
-            'image/gif',
-            'image/webp',
-        ]
-        ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
-
         if len(images) > 4:
             raise ValidationError('Можно загрузить не более 4 изображений.')
 
-        max_size = 5 * 1024 * 1024
         for image in images:
-            if image.size > max_size:
+            image_name = image.name.lower()
+            image_extension = image_name.split('.')[-1]
+            content_type = getattr(image, 'content_type', '')
+
+            if image.size > self.MAX_FILE_SIZE:
                 raise ValidationError(
-                    f'Изображение "{image.name}" превышает '
-                    f'максимальный размер 5 МБ.'
+                    f'Изображение "{image_name}" превышает '
+                    f'максимальный размер 10 МБ.'
                 )
 
-            content_type = getattr(image, 'content_type', '')
-            file_name = image.name.lower()
-
             is_valid = False
-            if content_type in ALLOWED_IMAGE_TYPES:
+            if content_type in self.ALLOWED_IMAGE_TYPES:
                 is_valid = True
             else:
-                for ext in ALLOWED_IMAGE_EXTENSIONS:
-                    if file_name.endswith(ext):
-                        is_valid = True
-                        break
+                if image_extension in self.ALLOWED_IMAGE_EXTENSIONS:
+                    is_valid = True
 
             if not is_valid:
                 raise ValidationError(
-                    f'Файл "{image.name}" имеет неподдерживаемый формат. '
+                    f'Файл "{image_name}" имеет неподдерживаемый формат. '
                     f'Разрешены: JPG, JPEG, PNG, GIF, WEBP.'
                 )
 
@@ -174,39 +181,32 @@ class AdForm(forms.ModelForm):
         """Валидация количества, размера и типа файлов"""
         files = self.cleaned_data.get('files', [])
 
-        ALLOWED_FILE_EXTENSIONS = [
-            '.pdf',
-            '.txt',
-            '.doc',
-            '.docx',
-            '.xls',
-            '.xlsx',
-            '.zip',
-            '.rar',
-        ]
-
         if len(files) > 4:
             raise ValidationError('Можно загрузить не более 4 файлов.')
 
-        max_size = 10 * 1024 * 1024
         for file in files:
-            if file.size > max_size:
+            file_name = file.name.lower()
+            file_extension = file_name.split('.')[-1]
+
+            if file_extension in self.ALLOWED_VIDEO_EXTENSIONS:
+                if file.size > self.MAX_VIDEO_SIZE:
+                    raise ValidationError(
+                        f'Видеофайл "{file.name}" превышает '
+                        f'максимальный размер 50 МБ.'
+                    )
+
+            if file.size > self.MAX_FILE_SIZE:
                 raise ValidationError(
                     f'Файл "{file.name}" превышает максимальный размер 10 МБ.'
                 )
 
-            file_name = file.name.lower()
-
-            is_valid = False
-            for ext in ALLOWED_FILE_EXTENSIONS:
-                if file_name.endswith(ext):
-                    is_valid = True
-                    break
-
-            if not is_valid:
+            if file_extension not in (
+                self.ALLOWED_FILE_EXTENSIONS + self.ALLOWED_VIDEO_EXTENSIONS
+            ):
                 raise ValidationError(
                     f'Файл "{file.name}" имеет неподдерживаемый формат. '
-                    f'Разрешены: PDF, TXT, DOC, DOCX, XLS, XLSX, ZIP, RAR.'
+                    f'Разрешены: PDF, TXT, DOC, DOCX, XLS, XLSX, ZIP, '
+                    f'RAR, MP4, MOV, WEBM.'
                 )
 
         return files

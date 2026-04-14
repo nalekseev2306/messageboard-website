@@ -192,7 +192,12 @@ class AdImage(models.Model):
 class AdFile(models.Model):
     """Файлы для объявления (PDF, DOC, TXT и т.д.)"""
 
-    ALLOWED_EXTENSIONS = ['pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx']
+    ALLOWED_EXTENSIONS = [
+        '.pdf', '.txt', '.doc',
+        '.docx', '.xls', '.xlsx',
+        '.zip', '.rar', 'mp4',
+        'webm', 'mov',
+    ]
 
     ad = models.ForeignKey(
         Ad,
