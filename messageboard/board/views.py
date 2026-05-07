@@ -59,12 +59,21 @@ class AdDetailView(DetailView):
 
     def get_queryset(self):
         """Показываем объявление только если оно активно"""
-        return (
-            Ad.objects.filter(
-                is_active=True, published_until__gt=timezone.now()
-            )
+        queryset = (
+            Ad.objects
             .select_related('category', 'author')
             .prefetch_related('images', 'files')
+        )
+
+        if self.request.user.is_authenticated:
+            return queryset.filter(
+                Q(is_active=True, published_until__gt=timezone.now()) |
+                Q(author=self.request.user)
+            )
+
+        return queryset.filter(
+            is_active=True,
+            published_until__gt=timezone.now()
         )
 
     def get_context_data(self, **kwargs):
@@ -273,8 +282,8 @@ class SearchAdsListView(ListView):
 
         if self.query:
             queryset = queryset.filter(
-                Q(title__icontains=self.query)
-                | Q(description__icontains=self.query)
+                Q(title__iregex=self.query)
+                | Q(description__iregex=self.query)
             )
 
         if self.category_id:

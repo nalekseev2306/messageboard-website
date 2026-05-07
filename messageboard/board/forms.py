@@ -61,10 +61,10 @@ class AdForm(forms.ModelForm):
     ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
 
     ALLOWED_FILE_EXTENSIONS = [
-            '.pdf', '.txt', '.doc',
-            '.docx', '.xls', '.xlsx',
-            '.zip', '.rar',
-        ]
+        'pdf', 'txt', 'doc',
+        'docx', 'xls', 'xlsx',
+        'zip', 'rar',
+    ]
     ALLOWED_VIDEO_EXTENSIONS = ['mp4', 'webm', 'mov',]
     MAX_VIDEO_SIZE = 50 * 1024 * 1024
     MAX_FILE_SIZE = 10 * 1024 * 1024
