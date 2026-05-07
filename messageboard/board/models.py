@@ -58,7 +58,7 @@ class Ad(models.Model):
         'Заголовок', max_length=200, validators=[MinLengthValidator(5)]
     )
     description = models.TextField(
-        'Описание', validators=[MinLengthValidator(20)]
+        'Описание', max_length=2000, validators=[MinLengthValidator(20)]
     )
     category = models.ForeignKey(
         Category,
@@ -80,23 +80,8 @@ class Ad(models.Model):
         'Цена', max_digits=10, decimal_places=0, blank=True, null=True
     )
 
-    # Контактная информация
-    contact_phone = models.CharField('Телефон для связи', max_length=20)
-    contact_email = models.EmailField('Email для связи', blank=True, null=True)
-    contact_name = models.CharField(
-        'Имя контактного лица', max_length=50, default='Продавец'
-    )
-
     # Город
     city = models.CharField('Город', max_length=100, blank=True, null=True)
-
-    # Изображения
-    main_image = models.ImageField(
-        'Главное изображение',
-        upload_to='ads/img/%Y/%m/',
-        blank=True,
-        null=True
-    )
 
     # Статусы объявления
     is_active = models.BooleanField('Активно', default=True)
@@ -162,7 +147,6 @@ class AdImage(models.Model):
         upload_to='ads/img/%Y/%m/',
         help_text='Поддерживаются форматы: JPG, PNG, GIF',
     )
-    is_main = models.BooleanField('Главное изображение', default=False)
     order = models.PositiveIntegerField('Порядок', default=0)
     created_at = models.DateTimeField('Дата загрузки', auto_now_add=True)
 
@@ -170,23 +154,9 @@ class AdImage(models.Model):
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображения'
         ordering = ['order', 'created_at']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['ad', 'is_main'],
-                condition=models.Q(is_main=True),
-                name='unique_main_image_per_ad',
-            )
-        ]
 
     def __str__(self):
         return f'Изображение {self.order + 1} для {self.ad.title}'
-
-    def save(self, *args, **kwargs):
-        if self.is_main:
-            AdImage.objects.filter(ad=self.ad, is_main=True).update(
-                is_main=False
-            )
-        super().save(*args, **kwargs)
 
 
 class AdFile(models.Model):

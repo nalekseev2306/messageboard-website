@@ -116,9 +116,6 @@ class AdCreateView(LoginRequiredMixin, CreateView):
         """Привязываем автора"""
         ad = form.save(commit=False)
         ad.author = self.request.user
-        ad.contact_phone = self.request.user.phone
-        ad.contact_email = self.request.user.email
-        ad.contact_name = self.request.user.get_full_name()
         ad.save()
 
         images = self.request.FILES.getlist('images')
