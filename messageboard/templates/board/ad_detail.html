@@ -3,6 +3,18 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block extra_css %}
+<!-- Lightbox CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+
+<style>
+    .lightbox img {
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <div class="container">
     {% if ad.is_expired and user == ad.author %}
@@ -223,6 +235,11 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Lightbox JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox-plus-jquery.min.js"></script>
 
 <script>
 function handleImageError(imgElement) {
@@ -230,14 +247,4 @@ function handleImageError(imgElement) {
     imgElement.src = "{% static 'images/placeholder.svg' %}";
 }
 </script>
-
-<!-- Lightbox для просмотра изображений -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox-plus-jquery.min.js"></script>
-
-<style>
-    .lightbox img {
-        cursor: pointer;
-    }
-</style>
 {% endblock %}

@@ -1,7 +1,7 @@
-# ruff.toml
-line-length = 80
+line-length = 99
 
 [lint]
+select = ["E", "W", "F", "I"]
 ignore = ["E501"]
 
 [format]

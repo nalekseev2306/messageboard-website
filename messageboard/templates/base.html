@@ -18,7 +18,17 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/fav/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/fav/favicon-16x16.png' %}">
 
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+        <style>
+            .hover-shadow {
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .hover-shadow:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            }
+        </style>
+    {% endblock %}
 </head>
 
 <body>
@@ -40,6 +50,7 @@
             {% endfor %}
         </div>
     {% endif %}
+    
     <!-- Основной контент -->
     <main class="py-4">
         {% block content %}{% endblock %}

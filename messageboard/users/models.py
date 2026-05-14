@@ -1,30 +1,32 @@
+import re
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from .validators import phone_regex
+from users.constants import (
+    CLEAR_PHONE_REGEX,
+    HELP_TEXT_CITY,
+    HELP_TEXT_PHONE,
+    MAX_CITY_LENGTH,
+    MAX_PHONE_LENGTH,
+)
 
 
 class User(AbstractUser):
-    """Расширенная модель пользователя"""
-
-    # Телефон
     phone = models.CharField(
         'Телефон',
-        max_length=12,
-        validators=[phone_regex],
+        max_length=MAX_PHONE_LENGTH,
         blank=True,
         null=True,
         unique=True,
-        help_text='В формате +7XXXXXXXXXX',
+        help_text=HELP_TEXT_PHONE,
     )
-
-    # Город
     city = models.CharField(
         'Город',
-        max_length=50,
+        max_length=MAX_CITY_LENGTH,
         blank=True,
         null=True,
-        help_text='Ваш город проживания',
+        help_text=HELP_TEXT_CITY,
     )
 
     class Meta:
@@ -42,14 +44,11 @@ class User(AbstractUser):
         return self.username
 
     def get_full_name(self):
-        """Возвращает полное имя пользователя"""
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'
         return self.username
 
     def save(self, *args, **kwargs):
         if self.phone:
-            import re
-
-            self.phone = re.sub(r'[\s\-\(\)]', '', self.phone)
+            self.phone = re.sub(CLEAR_PHONE_REGEX, '', self.phone)
         super().save(*args, **kwargs)

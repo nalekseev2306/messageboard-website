@@ -48,7 +48,7 @@ python manage.py init_categories
 ### 6. Загразка фикстуры (для тестирования)
 
 ```bash
-python manage.py loaddata ../db.json
+python manage.py loaddata ../fixtures/test_data.json
 ```
 
 ### 7. Запуск приложения

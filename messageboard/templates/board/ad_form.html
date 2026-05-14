@@ -221,11 +221,14 @@
 {% block extra_js %}
 <script>
 // Удаление изображения через AJAX
-document.querySelectorAll('.delete-image').forEach(button => {
+document.querySelectorAll('.delete-image, .delete-file').forEach(button => {
     button.addEventListener('click', function(e) {
         e.preventDefault();
-        if (confirm('Вы уверены, что хотите удалить это изображение?')) {
-            const url = this.dataset.url;
+        
+        const type = this.dataset.type || (this.classList.contains('delete-image') ? 'это изображение' : 'этот файл');
+        const url = this.dataset.url;
+        
+        if (confirm(`Вы уверены, что хотите удалить ${type}?`)) {
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -237,31 +240,7 @@ document.querySelectorAll('.delete-image').forEach(button => {
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Ошибка при удалении');
-                }
-            });
-        }
-    });
-});
-
-// Удаление файла через AJAX
-document.querySelectorAll('.delete-file').forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (confirm('Вы уверены, что хотите удалить этот файл?')) {
-            const url = this.dataset.url;
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Ошибка при удалении');
+                    alert(`Ошибка при удалении`);
                 }
             });
         }
