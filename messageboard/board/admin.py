@@ -1,14 +1,12 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from django.urls import reverse
+from django.utils.html import format_html
 
-from .models import Category, Ad, AdImage, AdFile
+from board.models import Ad, AdFile, AdImage, Category
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    """Админка для категорий"""
-
     list_display = (
         'name',
         'slug',
@@ -103,8 +101,6 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class AdImageInline(admin.TabularInline):
-    """Inline для изображений объявления"""
-
     model = AdImage
     extra = 1
     fields = ('image_preview', 'image', 'order')
@@ -126,8 +122,6 @@ class AdImageInline(admin.TabularInline):
 
 
 class AdFileInline(admin.TabularInline):
-    """Inline для файлов объявления"""
-
     model = AdFile
     extra = 1
     fields = ('file', 'file_size_display', 'order')
@@ -149,8 +143,6 @@ class AdFileInline(admin.TabularInline):
 
 @admin.register(Ad)
 class AdAdmin(admin.ModelAdmin):
-    """Админка для объявлений"""
-
     list_display = (
         'id',
         'title_preview',
@@ -278,8 +270,6 @@ class AdAdmin(admin.ModelAdmin):
 
 @admin.register(AdImage)
 class AdImageAdmin(admin.ModelAdmin):
-    """Админка для изображений"""
-
     list_display = ('id', 'ad_link', 'image_preview', 'order', 'created_at')
     list_filter = ('created_at',)
     list_editable = ('order',)
@@ -322,8 +312,6 @@ class AdImageAdmin(admin.ModelAdmin):
 
 @admin.register(AdFile)
 class AdFileAdmin(admin.ModelAdmin):
-    """Админка для файлов"""
-
     list_display = (
         'id',
         'ad_link',

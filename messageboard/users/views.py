@@ -1,3 +1,4 @@
+from board.models import Ad
 from django.contrib import messages
 from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,13 +11,14 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, UpdateView
 
-from board.models import Ad
 from users.constants import (
     MSG_ERROR_PROFILE_EDIT,
     MSG_ERROR_REGISTER,
     MSG_SUCCESS_PASSWORD_CHANGE,
     MSG_SUCCESS_PROFILE_EDIT,
     MSG_SUCCESS_REGISTER,
+    PUBLIC_PROFILE_PAGE_SIZE,
+    SELF_PROFILE_PAGE_SIZE,
 )
 from users.forms import UserChangeForm, UserCreationForm
 
@@ -69,7 +71,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         active_ads = all_user_ads.filter(is_active=True, published_until__gt=timezone.now())
         expired_ads = all_user_ads.filter(published_until__lt=timezone.now())
 
-        paginator = Paginator(all_user_ads, 10)
+        paginator = Paginator(all_user_ads, SELF_PROFILE_PAGE_SIZE)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
@@ -144,7 +146,7 @@ class PublicProfileView(DetailView):
         )
         total_ads = all_user_ads.count()
 
-        paginator = Paginator(all_user_ads, 6)
+        paginator = Paginator(all_user_ads, PUBLIC_PROFILE_PAGE_SIZE)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 

@@ -1,64 +1,79 @@
-from django.views.generic import (
-    ListView, DetailView,
-    CreateView, UpdateView,
-    DeleteView, TemplateView,
-)
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
-from django.contrib import messages
-from django.db.models import Q, Count
-from django.utils import timezone
-from django.http import JsonResponse
-from django.views import View
-from django.core.files.storage import default_storage
+from http import HTTPStatus
 
-from .models import Ad, Category, AdImage, AdFile
-from .forms import AdForm
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.files.storage import default_storage
+from django.db.models import Count, Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.views import View
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
+
+from board.constants import (
+    ABOUT_TITLE,
+    AD_LIST_TITLE,
+    CATEGORY_LIST_TITLE,
+    CREATE_BUTTON_TEXT,
+    CREATE_TITLE,
+    DETAIL_TITLE,
+    MSG_ERROR_CREATE,
+    MSG_ERROR_FILE,
+    MSG_ERROR_IMAGE,
+    MSG_ERROR_UPDATE,
+    MSG_PERMISSION_DENIED,
+    MSG_SUCCESS_CREATE,
+    MSG_SUCCESS_DELETE,
+    MSG_SUCCESS_FILE,
+    MSG_SUCCESS_IMAGE,
+    MSG_SUCCESS_UPDATE,
+    PAGE_SIZE,
+    UPDATE_BUTTON_TEXT,
+    UPDATE_TITLE,
+)
+from board.forms import AdForm
+from board.models import Ad, AdFile, AdImage, Category
 
 
 class AdListView(ListView):
-    """Список всех активных объявлений (главная страница)"""
-
     model = Ad
     template_name = 'board/ad_list.html'
     context_object_name = 'ads'
-    paginate_by = 9
+    paginate_by = PAGE_SIZE
 
     def get_queryset(self):
-        """Показываем только активные объявления, сортируем по дате"""
         return (
-            Ad.objects.filter(
-                is_active=True, published_until__gt=timezone.now()
-            )
+            Ad.objects.filter(is_active=True, published_until__gt=timezone.now())
             .select_related('category', 'author')
             .order_by('-created_at')
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Добавляем популярные категории для боковой панели
         context['popular_categories'] = (
             Category.objects.filter(is_active=True, ads__is_active=True)
             .annotate(ad_count=Count('ads'))
             .filter(ad_count__gt=0)
             .order_by('-ad_count')[:10]
         )
-
-        context['recent_ads'] = self.get_queryset()[:6]
-        context['title'] = 'Главная - Доска объявлений'
+        context['title'] = AD_LIST_TITLE
         return context
 
 
 class AdDetailView(DetailView):
-    """Детальная страница объявления"""
-
     model = Ad
     template_name = 'board/ad_detail.html'
     context_object_name = 'ad'
 
     def get_queryset(self):
-        """Показываем объявление только если оно активно"""
         queryset = (
             Ad.objects
             .select_related('category', 'author')
@@ -71,16 +86,12 @@ class AdDetailView(DetailView):
                 Q(author=self.request.user)
             )
 
-        return queryset.filter(
-            is_active=True,
-            published_until__gt=timezone.now()
-        )
+        return queryset.filter(is_active=True, published_until__gt=timezone.now())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         ad = self.get_object()
 
-        # Похожие объявления (по категории и типу)
         context['similar_ads'] = (
             Ad.objects.filter(
                 category=ad.category,
@@ -91,64 +102,51 @@ class AdDetailView(DetailView):
             .exclude(pk=ad.pk)
             .select_related('category')[:4]
         )
-
-        context['images_count'] = ad.images.count()
-        context['files_count'] = ad.files.count()
-        context['title'] = f'{ad.title} - Доска объявлений'
-
+        context['title'] = DETAIL_TITLE.format(title=ad.title)
         return context
 
 
 class AdCreateView(LoginRequiredMixin, CreateView):
-    """Создание нового объявления"""
-
     model = Ad
     form_class = AdForm
     template_name = 'board/ad_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Создать объявление'
-        context['button_text'] = 'Опубликовать'
+        context['title'] = CREATE_TITLE
+        context['button_text'] = CREATE_BUTTON_TEXT
         return context
 
     def form_valid(self, form):
-        """Привязываем автора"""
         ad = form.save(commit=False)
         ad.author = self.request.user
         ad.save()
 
         images = self.request.FILES.getlist('images')
         for idx, img in enumerate(images):
-            AdImage.objects.create(
-                ad=ad, image=img, is_main=False, order=ad.images.count() + idx
-            )
+            AdImage.objects.create(ad=ad, image=img, order=ad.images.count() + idx)
 
         files = self.request.FILES.getlist('files')
         for idx, file in enumerate(files):
-            AdFile.objects.create(
-                ad=ad, file=file, order=ad.files.count() + idx
-            )
+            AdFile.objects.create(ad=ad, file=file, order=ad.files.count() + idx)
 
-        messages.success(self.request, 'Ваше объявление успешно опубликовано!')
+        messages.success(self.request, MSG_SUCCESS_CREATE)
         return redirect('board:ad_detail', pk=ad.pk)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме')
+        messages.error(self.request, MSG_ERROR_CREATE)
         return super().form_invalid(form)
 
 
 class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    """Редактирование объявления"""
-
     model = Ad
     form_class = AdForm
     template_name = 'board/ad_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Редактировать объявление'
-        context['button_text'] = 'Сохранить изменения'
+        context['title'] = UPDATE_TITLE
+        context['button_text'] = UPDATE_BUTTON_TEXT
         context['existing_images'] = self.object.images.all()
         context['existing_files'] = self.object.files.all()
         return context
@@ -167,44 +165,25 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
         total_images = existing_images_count + len(new_images)
         if total_images > 4:
-            messages.error(
-                self.request,
-                (
-                    'Превышено максимальное количество изображений. '
-                    'Вы можете загрузить не более 4.'
-                ),
-            )
+            messages.error(self.request, MSG_ERROR_IMAGE)
             return redirect('board:ad_update', pk=ad.pk)
 
         total_files = existing_files_count + len(new_files)
         if total_files > 4:
-            messages.error(
-                self.request,
-                (
-                    'Превышено максимальное количество файлов. '
-                    'Вы можете загрузить не более 4.'
-                ),
-            )
+            messages.error(self.request, MSG_ERROR_FILE)
             return redirect('board:ad_update', pk=ad.pk)
 
         for idx, img in enumerate(new_images):
-            AdImage.objects.create(
-                ad=ad,
-                image=img,
-                is_main=False,
-                order=existing_images_count + idx,
-            )
+            AdImage.objects.create(ad=ad, image=img, order=existing_images_count + idx)
 
         for idx, file in enumerate(new_files):
-            AdFile.objects.create(
-                ad=ad, file=file, order=existing_files_count + idx
-            )
+            AdFile.objects.create(ad=ad, file=file, order=existing_files_count + idx)
 
-        messages.success(self.request, 'Объявление успешно обновлено!')
+        messages.success(self.request, MSG_SUCCESS_UPDATE)
         return redirect('board:ad_detail', pk=ad.pk)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме')
+        messages.error(self.request, MSG_ERROR_UPDATE)
         return super().form_invalid(form)
 
     def get_success_url(self):
@@ -212,32 +191,26 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class AdDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """Удаление объявления"""
-
     model = Ad
     template_name = 'board/ad_confirm_delete.html'
     success_url = reverse_lazy('board:ad_list')
 
     def test_func(self):
-        """Только автор или админ может удалить"""
         ad = self.get_object()
         return self.request.user.is_staff or ad.author == self.request.user
 
     def delete(self, request, *args, **kwargs):
-        messages.success(request, 'Объявление успешно удалено!')
+        messages.success(request, MSG_SUCCESS_DELETE)
         return super().delete(request, *args, **kwargs)
 
 
-class CategoryAdsListView(ListView):
-    """Объявления по категории"""
-
+class CategoryAdListView(ListView):
     model = Ad
     template_name = 'board/category_ads.html'
     context_object_name = 'ads'
-    paginate_by = 9
+    paginate_by = PAGE_SIZE
 
     def get_queryset(self):
-        """Фильтруем объявления по slug категории"""
         self.category = get_object_or_404(
             Category.objects.filter(is_active=True), slug=self.kwargs['slug']
         )
@@ -254,20 +227,17 @@ class CategoryAdsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['category'] = self.category
-        context['title'] = f'{self.category.name} - Доска объявлений'
+        context['title'] = CATEGORY_LIST_TITLE.format(category=self.category.name)
         return context
 
 
-class SearchAdsListView(ListView):
-    """Поиск объявлений"""
-
+class SearchAdListView(ListView):
     model = Ad
     template_name = 'board/search_results.html'
     context_object_name = 'ads'
-    paginate_by = 9
+    paginate_by = PAGE_SIZE
 
     def get_queryset(self):
-        """Реализуем поиск по заголовку, описанию, категории и городу"""
         queryset = Ad.objects.filter(
             is_active=True, published_until__gt=timezone.now()
         ).select_related('category', 'author')
@@ -302,15 +272,11 @@ class SearchAdsListView(ListView):
         context['selected_city'] = self.city
         context['selected_ad_type'] = self.ad_type
         context['ad_types'] = Ad.AD_TYPE_CHOICES
-        context['title'] = (
-            f'Поиск: {self.query}' if self.query else 'Поиск объявлений'
-        )
+        context['title'] = f'Поиск: {self.query}' if self.query else 'Поиск объявлений'
         return context
 
 
 class DeleteImageView(LoginRequiredMixin, View):
-    """Удаление изображения из БД и из media"""
-
     def post(self, request, pk):
         try:
             image = get_object_or_404(AdImage, pk=pk)
@@ -318,8 +284,8 @@ class DeleteImageView(LoginRequiredMixin, View):
 
             if request.user != ad.author and not request.user.is_staff:
                 return JsonResponse(
-                    {'success': False, 'error': 'У вас нет прав на удаление'},
-                    status=403,
+                    {'success': False, 'error': MSG_PERMISSION_DENIED},
+                    status=HTTPStatus.FORBIDDEN,
                 )
 
             file_path = image.image.name
@@ -329,18 +295,18 @@ class DeleteImageView(LoginRequiredMixin, View):
             image.delete()
 
             return JsonResponse(
-                {'success': True, 'message': 'Изображение удалено'}
+                {'success': True, 'message': MSG_SUCCESS_IMAGE},
+                status=HTTPStatus.OK
             )
 
         except Exception as e:
             return JsonResponse(
-                {'success': False, 'error': str(e)}, status=500
+                {'success': False, 'error': str(e)},
+                status=HTTPStatus.INTERNAL_SERVER_ERROR
             )
 
 
 class DeleteFileView(LoginRequiredMixin, View):
-    """Удаление файла из БД и из media"""
-
     def post(self, request, pk):
         try:
             file_obj = get_object_or_404(AdFile, pk=pk)
@@ -348,8 +314,8 @@ class DeleteFileView(LoginRequiredMixin, View):
 
             if request.user != ad.author and not request.user.is_staff:
                 return JsonResponse(
-                    {'success': False, 'error': 'У вас нет прав на удаление'},
-                    status=403,
+                    {'success': False, 'error': MSG_PERMISSION_DENIED},
+                    status=HTTPStatus.FORBIDDEN,
                 )
 
             file_path = file_obj.file.name
@@ -357,24 +323,25 @@ class DeleteFileView(LoginRequiredMixin, View):
                 default_storage.delete(file_path)
 
             file_obj.delete()
-            return JsonResponse({'success': True, 'message': 'Файл удален'})
+
+            return JsonResponse(
+                {'success': True, 'message': MSG_SUCCESS_FILE},
+                status=HTTPStatus.OK
+            )
 
         except Exception as e:
             return JsonResponse(
-                {'success': False, 'error': str(e)}, status=500
+                {'success': False, 'error': str(e)},
+                status=HTTPStatus.INTERNAL_SERVER_ERROR
             )
 
 
 class AboutView(TemplateView):
-    """Страница о проекте"""
-
     template_name = 'board/about.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['total_ads'] = Ad.objects.filter(is_active=True).count()
-        context['total_categories'] = Category.objects.filter(
-            is_active=True
-        ).count()
-        context['title'] = 'О проекте'
+        context['total_categories'] = Category.objects.filter(is_active=True).count()
+        context['title'] = ABOUT_TITLE
         return context
