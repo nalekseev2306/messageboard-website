@@ -82,9 +82,7 @@ class AdForm(forms.ModelForm):
             'title': forms.TextInput(
                 attrs={
                     'class': 'form-control',
-                    'placeholder': (
-                        'Что-нибудь привлекательное и информативное...'
-                    ),
+                    'placeholder': ('Что-нибудь привлекательное и информативное...'),
                 }
             ),
             'description': forms.Textarea(
@@ -96,12 +94,8 @@ class AdForm(forms.ModelForm):
             ),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'ad_type': forms.Select(attrs={'class': 'form-select'}),
-            'price': forms.NumberInput(
-                attrs={'class': 'form-control', 'min': '0', 'step': '1'}
-            ),
-            'city': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Москва'}
-            ),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Москва'}),
             'published_until': forms.DateInput(
                 attrs={
                     'class': 'form-control',
@@ -114,7 +108,9 @@ class AdForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['published_until'].required = False
-        self.fields['published_until'].help_text = 'Оставьте пустым для автоматической установки (30 дней)'
+        self.fields[
+            'published_until'
+        ].help_text = 'Оставьте пустым для автоматической установки (30 дней)'
         self.fields['price'].required = False
         self.fields['price'].help_text = 'Оставьте пустым, если не требуется'
 
@@ -139,7 +135,9 @@ class AdForm(forms.ModelForm):
             content_type = getattr(image, 'content_type', '')
 
             if image.size > MAX_FILE_SIZE:
-                raise ValidationError(MSG_FILE_SIZE_ERROR.format(name=image_name, size=MAX_FILE_SIZE))
+                raise ValidationError(
+                    MSG_FILE_SIZE_ERROR.format(name=image_name, size=MAX_FILE_SIZE)
+                )
 
             is_valid = False
             if content_type in ALLOWED_IMAGE_TYPES:
@@ -149,7 +147,11 @@ class AdForm(forms.ModelForm):
                     is_valid = True
 
             if not is_valid:
-                raise ValidationError(MSG_FILE_EXTENSION_ERROR.format(name=image_name, extensions=", ".join(ALLOWED_IMAGE_EXTENSIONS).upper()))
+                raise ValidationError(
+                    MSG_FILE_EXTENSION_ERROR.format(
+                        name=image_name, extensions=', '.join(ALLOWED_IMAGE_EXTENSIONS).upper()
+                    )
+                )
 
         return images
 
@@ -164,10 +166,15 @@ class AdForm(forms.ModelForm):
             file_extension = file_name.split('.')[-1]
 
             if file.size > MAX_FILE_SIZE:
-                raise ValidationError(MSG_FILE_SIZE_ERROR.format(name=file.name, size=MAX_FILE_SIZE))
+                raise ValidationError(
+                    MSG_FILE_SIZE_ERROR.format(name=file.name, size=MAX_FILE_SIZE)
+                )
 
             if file_extension not in ALLOWED_FILE_EXTENSIONS:
-                raise ValidationError(MSG_FILE_EXTENSION_ERROR.format(name=file.name, extensions=", ".join(ALLOWED_FILE_EXTENSIONS).upper()))
-
+                raise ValidationError(
+                    MSG_FILE_EXTENSION_ERROR.format(
+                        name=file.name, extensions=', '.join(ALLOWED_FILE_EXTENSIONS).upper()
+                    )
+                )
 
         return files

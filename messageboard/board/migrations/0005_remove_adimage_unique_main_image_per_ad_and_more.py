@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('board', '0004_remove_adfile_title'),
     ]
@@ -38,11 +37,38 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ad',
             name='description',
-            field=models.TextField(max_length=2000, validators=[django.core.validators.MinLengthValidator(20)], verbose_name='Описание'),
+            field=models.TextField(
+                max_length=2000,
+                validators=[django.core.validators.MinLengthValidator(20)],
+                verbose_name='Описание',
+            ),
         ),
         migrations.AlterField(
             model_name='adfile',
             name='file',
-            field=models.FileField(help_text=('Поддерживаемые форматы: .PDF, .TXT, .DOC, .DOCX, .XLS, .XLSX, .ZIP, .RAR, MP4, WEBM, MOV',), upload_to='ads/files/%Y/%m/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['.pdf', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', 'mp4', 'webm', 'mov'])], verbose_name='Файл'),
+            field=models.FileField(
+                help_text=(
+                    'Поддерживаемые форматы: .PDF, .TXT, .DOC, .DOCX, .XLS, .XLSX, .ZIP, .RAR, MP4, WEBM, MOV',
+                ),
+                upload_to='ads/files/%Y/%m/',
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=[
+                            '.pdf',
+                            '.txt',
+                            '.doc',
+                            '.docx',
+                            '.xls',
+                            '.xlsx',
+                            '.zip',
+                            '.rar',
+                            'mp4',
+                            'webm',
+                            'mov',
+                        ]
+                    )
+                ],
+                verbose_name='Файл',
+            ),
         ),
     ]

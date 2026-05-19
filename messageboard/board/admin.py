@@ -66,10 +66,7 @@ class CategoryAdmin(admin.ModelAdmin):
     def ad_count(self, obj):
         count = obj.ads.filter(is_active=True).count()
         if count > 0:
-            url = (
-                reverse('admin:board_ad_changelist')
-                + f'?category__id__exact={obj.id}'
-            )
+            url = reverse('admin:board_ad_changelist') + f'?category__id__exact={obj.id}'
             return format_html('<a href="{}">{}</a>', url, count)
         return 0
 
@@ -78,10 +75,7 @@ class CategoryAdmin(admin.ModelAdmin):
     def ad_count_display(self, obj):
         count = obj.ads.filter(is_active=True).count()
         return format_html(
-            (
-                '<span style="font-size: 14px; font-weight: bold;">'
-                'Всего объявлений: {}</span>'
-            ),
+            ('<span style="font-size: 14px; font-weight: bold;">Всего объявлений: {}</span>'),
             count,
         )
 
@@ -217,9 +211,7 @@ class AdAdmin(admin.ModelAdmin):
     save_on_top = True
 
     def get_queryset(self, request):
-        return (
-            super().get_queryset(request).select_related('category', 'author')
-        )
+        return super().get_queryset(request).select_related('category', 'author')
 
     def title_preview(self, obj):
         if len(obj.title) > 50:

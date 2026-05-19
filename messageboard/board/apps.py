@@ -7,4 +7,5 @@ class BoardConfig(AppConfig):
 
     def ready(self):
         from board.signals import register_signals
+
         register_signals()

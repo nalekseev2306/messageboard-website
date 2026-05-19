@@ -127,8 +127,8 @@ class UserChangeForm(BaseUserForm, BaseUserChangeForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if (
-            username and
-            User.objects.filter(username=username).exclude(pk=self.instance.pk).exists()
+            username
+            and User.objects.filter(username=username).exclude(pk=self.instance.pk).exists()
         ):
             raise ValidationError(MSG_USERNAME_TAKEN)
         return username

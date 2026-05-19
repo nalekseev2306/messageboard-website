@@ -44,8 +44,12 @@ class Category(models.Model):
 
 
 class Ad(models.Model):
-    title = models.CharField('Заголовок', max_length=MAX_AD_TITLE_LENGTH, validators=[MinLengthValidator(5)])
-    description = models.TextField('Описание', max_length=MAX_AD_DESCRIPTION_LENGTH, validators=[MinLengthValidator(20)])
+    title = models.CharField(
+        'Заголовок', max_length=MAX_AD_TITLE_LENGTH, validators=[MinLengthValidator(5)]
+    )
+    description = models.TextField(
+        'Описание', max_length=MAX_AD_DESCRIPTION_LENGTH, validators=[MinLengthValidator(20)]
+    )
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
@@ -53,10 +57,7 @@ class Ad(models.Model):
         verbose_name='Категория',
     )
     ad_type = models.CharField(
-        'Тип объявления',
-        max_length=32,
-        choices=AD_TYPE_CHOICES,
-        default='sale'
+        'Тип объявления', max_length=32, choices=AD_TYPE_CHOICES, default='sale'
     )
     price = models.DecimalField('Цена', max_digits=10, decimal_places=0, blank=True, null=True)
     city = models.CharField('Город', max_length=MAX_AD_CITY_LENGTH, blank=True, null=True)
@@ -137,7 +138,7 @@ class AdFile(models.Model):
         'Файл',
         upload_to='ads/files/%Y/%m/',
         validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_EXTENSIONS)],
-        help_text=f'Поддерживаемые форматы: {", ".join(ALLOWED_FILE_EXTENSIONS).upper()}'
+        help_text=f'Поддерживаемые форматы: {", ".join(ALLOWED_FILE_EXTENSIONS).upper()}',
     )
     file_size = models.PositiveIntegerField('Размер файла (байт)', editable=False, default=0)
     order = models.PositiveIntegerField('Порядок', default=0)

@@ -62,15 +62,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'order',
-                    models.PositiveIntegerField(
-                        default=0, verbose_name='Порядок'
-                    ),
+                    models.PositiveIntegerField(default=0, verbose_name='Порядок'),
                 ),
                 (
                     'created_at',
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name='Дата загрузки'
-                    ),
+                    models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки'),
                 ),
                 (
                     'ad',
@@ -110,21 +106,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'is_main',
-                    models.BooleanField(
-                        default=False, verbose_name='Главное изображение'
-                    ),
+                    models.BooleanField(default=False, verbose_name='Главное изображение'),
                 ),
                 (
                     'order',
-                    models.PositiveIntegerField(
-                        default=0, verbose_name='Порядок'
-                    ),
+                    models.PositiveIntegerField(default=0, verbose_name='Порядок'),
                 ),
                 (
                     'created_at',
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name='Дата загрузки'
-                    ),
+                    models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки'),
                 ),
                 (
                     'ad',

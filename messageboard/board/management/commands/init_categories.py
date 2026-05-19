@@ -24,15 +24,9 @@ class Command(BaseCommand):
 
             if not obj.slug or obj.slug == '':
                 obj.save()
-                self.stdout.write(
-                    self.style.WARNING(f'Обновлён slug для: {obj.name}')
-                )
+                self.stdout.write(self.style.WARNING(f'Обновлён slug для: {obj.name}'))
 
             if created:
-                self.stdout.write(
-                    self.style.SUCCESS(f'Создана категория: {obj.name}')
-                )
+                self.stdout.write(self.style.SUCCESS(f'Создана категория: {obj.name}'))
 
-        self.stdout.write(
-            self.style.SUCCESS('Категории успешно инициализированы!')
-        )
+        self.stdout.write(self.style.SUCCESS('Категории успешно инициализированы!'))

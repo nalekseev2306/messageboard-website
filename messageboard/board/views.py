@@ -74,16 +74,13 @@ class AdDetailView(DetailView):
     context_object_name = 'ad'
 
     def get_queryset(self):
-        queryset = (
-            Ad.objects
-            .select_related('category', 'author')
-            .prefetch_related('images', 'files')
+        queryset = Ad.objects.select_related('category', 'author').prefetch_related(
+            'images', 'files'
         )
 
         if self.request.user.is_authenticated:
             return queryset.filter(
-                Q(is_active=True, published_until__gt=timezone.now()) |
-                Q(author=self.request.user)
+                Q(is_active=True, published_until__gt=timezone.now()) | Q(author=self.request.user)
             )
 
         return queryset.filter(is_active=True, published_until__gt=timezone.now())
@@ -249,8 +246,7 @@ class SearchAdListView(ListView):
 
         if self.query:
             queryset = queryset.filter(
-                Q(title__iregex=self.query)
-                | Q(description__iregex=self.query)
+                Q(title__iregex=self.query) | Q(description__iregex=self.query)
             )
 
         if self.category_id:
@@ -295,14 +291,12 @@ class DeleteImageView(LoginRequiredMixin, View):
             image.delete()
 
             return JsonResponse(
-                {'success': True, 'message': MSG_SUCCESS_IMAGE},
-                status=HTTPStatus.OK
+                {'success': True, 'message': MSG_SUCCESS_IMAGE}, status=HTTPStatus.OK
             )
 
         except Exception as e:
             return JsonResponse(
-                {'success': False, 'error': str(e)},
-                status=HTTPStatus.INTERNAL_SERVER_ERROR
+                {'success': False, 'error': str(e)}, status=HTTPStatus.INTERNAL_SERVER_ERROR
             )
 
 
@@ -325,14 +319,12 @@ class DeleteFileView(LoginRequiredMixin, View):
             file_obj.delete()
 
             return JsonResponse(
-                {'success': True, 'message': MSG_SUCCESS_FILE},
-                status=HTTPStatus.OK
+                {'success': True, 'message': MSG_SUCCESS_FILE}, status=HTTPStatus.OK
             )
 
         except Exception as e:
             return JsonResponse(
-                {'success': False, 'error': str(e)},
-                status=HTTPStatus.INTERNAL_SERVER_ERROR
+                {'success': False, 'error': str(e)}, status=HTTPStatus.INTERNAL_SERVER_ERROR
             )
 
 

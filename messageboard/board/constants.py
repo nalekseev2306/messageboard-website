@@ -20,10 +20,17 @@ ALLOWED_IMAGE_TYPES = [
 ]
 ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
 ALLOWED_FILE_EXTENSIONS = [
-    'pdf', 'txt', 'doc',
-    'docx', 'xls', 'xlsx',
-    'zip', 'rar', 'mp4',
-    'webm', 'mov'
+    'pdf',
+    'txt',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'zip',
+    'rar',
+    'mp4',
+    'webm',
+    'mov',
 ]
 MAX_FILE_SIZE = 10 * 1024 * 1024
 

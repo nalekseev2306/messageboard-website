@@ -37,21 +37,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'slug',
-                    models.SlugField(
-                        max_length=100, unique=True, verbose_name='URL'
-                    ),
+                    models.SlugField(max_length=100, unique=True, verbose_name='URL'),
                 ),
                 (
                     'description',
-                    models.TextField(
-                        blank=True, null=True, verbose_name='Описание'
-                    ),
+                    models.TextField(blank=True, null=True, verbose_name='Описание'),
                 ),
                 (
                     'order',
-                    models.PositiveIntegerField(
-                        default=0, verbose_name='Порядок сортировки'
-                    ),
+                    models.PositiveIntegerField(default=0, verbose_name='Порядок сортировки'),
                 ),
                 (
                     'is_active',
@@ -59,15 +53,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'created_at',
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name='Дата создания'
-                    ),
+                    models.DateTimeField(auto_now_add=True, verbose_name='Дата создания'),
                 ),
                 (
                     'updated_at',
-                    models.DateTimeField(
-                        auto_now=True, verbose_name='Дата обновления'
-                    ),
+                    models.DateTimeField(auto_now=True, verbose_name='Дата обновления'),
                 ),
             ],
             options={
@@ -92,18 +82,14 @@ class Migration(migrations.Migration):
                     'title',
                     models.CharField(
                         max_length=200,
-                        validators=[
-                            django.core.validators.MinLengthValidator(5)
-                        ],
+                        validators=[django.core.validators.MinLengthValidator(5)],
                         verbose_name='Заголовок',
                     ),
                 ),
                 (
                     'description',
                     models.TextField(
-                        validators=[
-                            django.core.validators.MinLengthValidator(20)
-                        ],
+                        validators=[django.core.validators.MinLengthValidator(20)],
                         verbose_name='Описание',
                     ),
                 ),
@@ -134,9 +120,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'contact_phone',
-                    models.CharField(
-                        max_length=20, verbose_name='Телефон для связи'
-                    ),
+                    models.CharField(max_length=20, verbose_name='Телефон для связи'),
                 ),
                 (
                     'contact_email',
@@ -186,15 +170,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'updated_at',
-                    models.DateTimeField(
-                        auto_now=True, verbose_name='Дата обновления'
-                    ),
+                    models.DateTimeField(auto_now=True, verbose_name='Дата обновления'),
                 ),
                 (
                     'published_until',
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name='Актуально до'
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name='Актуально до'),
                 ),
                 (
                     'author',
@@ -230,9 +210,7 @@ class Migration(migrations.Migration):
                         fields=['category', '-created_at'],
                         name='board_ad_categor_3cf706_idx',
                     ),
-                    models.Index(
-                        fields=['is_active'], name='board_ad_is_acti_46510c_idx'
-                    ),
+                    models.Index(fields=['is_active'], name='board_ad_is_acti_46510c_idx'),
                 ],
             },
         ),
